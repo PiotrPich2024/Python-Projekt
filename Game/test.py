@@ -8,7 +8,8 @@ class Game:
         pygame.display.set_caption('game')
         self.screen =  pygame.display.set_mode((640,480))
         self.clock = pygame.time.Clock()
-        self.img = pygame.image.load('../Pixel art/Bennings.png')
+        self.img = pygame.image.load('Pixel art/map.png')
+        self.img = pygame.transform.scale(self.img, (640,480))
         self.enemies = [False,False,True,False]
         self.pointEnemy = 0
 
