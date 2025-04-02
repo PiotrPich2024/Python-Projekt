@@ -1,36 +1,35 @@
 import pygame
 from GameEngine import GameEngine
+import json
 
-pygame.init()
 
 class Game:
-    def __init__(self):
+    def __init__(self,size_id):
         pygame.init()
         pygame.display.set_caption('game')
-        self.screen =  pygame.display.set_mode((640,480))
+
+
+        with open('../Parameters.JSON','r') as file:
+            data = json.load(file)
+        self.parameters = next((item for item in data['sizes'] if item['size_id'] == size_id),None)
+        if not self.parameters:
+            raise ValueError(f"Nie znaleziono size_id {size_id} w pliku JSON")
+
+        self.screen = pygame.display.set_mode((self.parameters["map_width"], self.parameters["map_height"]))
         self.clock = pygame.time.Clock()
-        self.GameEngine = GameEngine()
+
+        self.GameEngine = GameEngine(self.parameters)
+
 
     def run(self):
-        running = True
-        dest = [150, 150]
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    continue
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    dest[0],dest[1] = pygame.mouse.get_pos()
+        # dest = [self.GameEngine.player.img_pos[0]/2,self.GameEngine.player.img_pos[1]/2]
 
-            self.screen.blit(self.GameEngine.map.img,self.GameEngine.map.img_pos)
 
-            self.screen.blit(self.GameEngine.player.img, self.GameEngine.player.img_pos)
-            self.GameEngine.player.move_to(dest[0],dest[1])
-            pygame.display.update()
-            self.clock.tick(60)
+        self.GameEngine.run(self.clock,self.screen)
+
 
         pygame.quit()
 
 if __name__ == '__main__':
-    game = Game()
+    game = Game(0)
     game.run()
