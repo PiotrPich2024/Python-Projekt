@@ -31,7 +31,7 @@ class GameEngine:
                     pygame.quit()
                     return show_menu
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_SPACE and not self.entered_new_level:
                         self.cleared_level = True
                     if event.key == pygame.K_ESCAPE:
                         running = False
@@ -39,7 +39,7 @@ class GameEngine:
                         self.player.appear_at(self.map.player_start_pos[0], self.map.player_start_pos[1])
                         self.cleared_level = False
                         self.entered_new_level = True
-                        continue
+                        return show_menu
                 # if event.type == pygame.MOUSEBUTTONDOWN:
                 #     dest[0],dest[1] = pygame.mouse.get_pos()
 

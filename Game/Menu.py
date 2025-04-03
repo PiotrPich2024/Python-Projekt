@@ -59,7 +59,7 @@ class Menu:
             self.render(surf)
             pygame.display.update()
             clock.tick(60)
-        print(show_play)
+
         return show_play, show_score
 
 

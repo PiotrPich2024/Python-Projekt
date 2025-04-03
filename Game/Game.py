@@ -7,7 +7,7 @@ from Menu import Menu
 class Game:
     def __init__(self,size_id):
         pygame.init()
-        pygame.display.set_caption('game')
+        pygame.display.set_caption('FREQUENCIES OF FEAR')
         gameIcon = pygame.image.load('Pixel art/logo.png')
         pygame.display.set_icon(pygame.transform.scale(gameIcon,(32,32)))
 
