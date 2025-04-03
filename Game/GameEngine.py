@@ -21,17 +21,25 @@ class GameEngine:
         self.player.render(surf)
         self.map.render_back_wall(surf)
 
-    def run(self, clock,surf):
+    def run(self, clock,surf,show_menu):
         running = True
         # dest = [self.player.img_pos[0] + self.player.width/2, self.player.img_pos[1] + self.player.height/2]
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                    continue
+                    pygame.quit()
+                    return show_menu
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.cleared_level = True
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                        show_menu = True
+                        self.player.appear_at(self.map.player_start_pos[0], self.map.player_start_pos[1])
+                        self.cleared_level = False
+                        self.entered_new_level = True
+                        continue
                 # if event.type == pygame.MOUSEBUTTONDOWN:
                 #     dest[0],dest[1] = pygame.mouse.get_pos()
 
@@ -52,4 +60,5 @@ class GameEngine:
             # self.player.move_to(dest[0],dest[1])
             pygame.display.update()
             clock.tick(60)
+        return show_menu
 

@@ -6,7 +6,11 @@
       "map_width": 640,
       "player_height": 64,
       "player_width": 64,
-      "player_velocity": 2
+      "player_velocity": 2,
+      "menu_height": 480,
+      "menu_width": 640,
+      "play_button_pos": [300,380],
+      "score_button_pos": [470,380]
     }
   ]
 }
