@@ -1,25 +1,32 @@
 import pygame
 from Map import Map
 from Player import Player
+from Enemy import Enemy
 import pygame
 
 
 class GameEngine:
     def __init__(self,parameters):
         self.map = Map(parameters["map_width"],parameters["map_height"])
-        self.player = Player(parameters["player_width"], parameters["player_height"], 0,0,
+        self.player = Player(parameters["entity_width"], parameters["entity_height"], 0,0,
                              parameters["player_velocity"])
 
         self.player.appear_at(self.map.player_start_pos[0], self.map.player_start_pos[1])
         self.cleared_level = False
         self.entered_new_level = True
-
+        
+        self.enemy = Enemy(parameters["entity_width"], parameters["entity_height"], 100,300, False)
+        self.enemy_is_dead = False
 
 
     def render(self,surf):
         self.map.render_map(surf)
         self.player.render(surf)
         self.map.render_back_wall(surf)
+        if self.enemy_is_dead:
+            self.enemy.render_dead(surf)
+        else:
+            self.enemy.render(surf)
 
     def run(self, clock,surf,show_menu):
         running = True
@@ -33,6 +40,7 @@ class GameEngine:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and not self.entered_new_level:
                         self.cleared_level = True
+                        self.enemy_is_dead = True
                     if event.key == pygame.K_ESCAPE:
                         running = False
                         show_menu = True
@@ -45,6 +53,7 @@ class GameEngine:
 
             if self.entered_new_level:
                 dest_x,dest_y = self.map.player_shooting_pos
+                self.enemy_is_dead = False
                 if self.player.move_to(dest_x,dest_y):
                     self.entered_new_level = False
 
