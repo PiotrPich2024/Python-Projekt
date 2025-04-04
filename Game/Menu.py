@@ -54,7 +54,7 @@ class Menu:
 
                         return sc
                     elif(self.clicked_on_score(x,y)):
-                        sc = ShowScreen.show_screen
+                        sc = ShowScreen.show_score
                         running = False
                         return sc
             self.render(surf)

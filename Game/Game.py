@@ -31,15 +31,14 @@ class Game:
 
         sc = ShowScreen.show_menu
         while sc:
-            if ShowScreen.show_menu == sc:
-                sc = self.Menu.show(self.clock,self.screen,sc)
+            match sc:
+                case ShowScreen.show_menu:
+                    sc = self.Menu.show(self.clock, self.screen, sc)
+                case ShowScreen.show_game:
+                    sc = self.GameEngine.run(self.clock,self.screen,sc)
+                case _:
+                    break
 
-            if ShowScreen.show_game == sc:
-                sc = self.GameEngine.run(self.clock,self.screen,sc)
-
-
-
-        pygame.quit()
 
 if __name__ == '__main__':
     game = Game(0)
