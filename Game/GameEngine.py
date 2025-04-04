@@ -3,7 +3,7 @@ from Map import Map
 from Player import Player
 from Enemy import Enemy
 import pygame
-
+from show_screen import ShowScreen
 
 class GameEngine:
     def __init__(self,parameters):
@@ -28,26 +28,27 @@ class GameEngine:
         else:
             self.enemy.render(surf)
 
-    def run(self, clock,surf,show_menu):
+    def run(self, clock,surf,sc):
         running = True
         # dest = [self.player.img_pos[0] + self.player.width/2, self.player.img_pos[1] + self.player.height/2]
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                    sc = None
                     pygame.quit()
-                    return show_menu
+                    return sc
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and not self.entered_new_level:
                         self.cleared_level = True
                         self.enemy_is_dead = True
                     if event.key == pygame.K_ESCAPE:
                         running = False
-                        show_menu = True
+                        sc = ShowScreen.show_menu
                         self.player.appear_at(self.map.player_start_pos[0], self.map.player_start_pos[1])
                         self.cleared_level = False
                         self.entered_new_level = True
-                        return show_menu
+                        return sc
                 # if event.type == pygame.MOUSEBUTTONDOWN:
                 #     dest[0],dest[1] = pygame.mouse.get_pos()
 
@@ -69,5 +70,6 @@ class GameEngine:
             # self.player.move_to(dest[0],dest[1])
             pygame.display.update()
             clock.tick(60)
-        return show_menu
+        sc = None
+        return sc
 
