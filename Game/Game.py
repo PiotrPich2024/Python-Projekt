@@ -2,6 +2,7 @@ import pygame
 from GameEngine import GameEngine
 import json
 from Menu import Menu
+from show_screen import ShowScreen
 
 
 class Game:
@@ -27,20 +28,18 @@ class Game:
 
     def run(self):
         # dest = [self.GameEngine.player.img_pos[0]/2,self.GameEngine.player.img_pos[1]/2]
-        show_game = False
-        show_menu = True
-        show_score = False
 
-        while show_game or show_menu or show_score:
-            if show_menu:
-                show_game, show_score = self.Menu.show(self.clock,self.screen,show_game,show_score)
+        sc = ShowScreen.show_menu
+        while sc:
+            match sc:
+                case ShowScreen.show_menu:
+                    sc = self.Menu.show(self.clock, self.screen, sc)
+                case ShowScreen.show_game:
+                    self.GameEngine = GameEngine(self.parameters)
+                    sc = self.GameEngine.run(self.clock,self.screen,sc)
+                case _:
+                    break
 
-            if(show_game):
-                self.GameEngine.run(self.clock,self.screen,show_menu)
-                show_game = False
-
-
-        pygame.quit()
 
 if __name__ == '__main__':
     game = Game(0)

@@ -1,4 +1,5 @@
 import pygame
+from show_screen import ShowScreen
 
 class Menu:
     def __init__(self,width,height,play_button_pos,score_button_pos):
@@ -36,30 +37,30 @@ class Menu:
                           self.score_button_pos[1] + self.button_height])
         return up_left[0] < x < down_right[0] and up_left[1] < y < down_right[1]
 
-    def show(self,clock,surf,show_play,show_score):
+    def show(self,clock,surf,sc):
         running = True
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                     pygame.quit()
-                    return show_play, show_score
+                    sc = None
+                    return sc
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     x,y = pygame.mouse.get_pos()
                     if(self.clicked_on_play(x,y)):
-
-                        show_play = True
                         running = False
+                        sc = ShowScreen.show_game
 
-                        continue
+                        return sc
                     elif(self.clicked_on_score(x,y)):
-                        show_score = True
+                        sc = ShowScreen.show_score
                         running = False
-                        continue
+                        return sc
             self.render(surf)
             pygame.display.update()
             clock.tick(60)
-
-        return show_play, show_score
+        sc = None
+        return sc
 
 
