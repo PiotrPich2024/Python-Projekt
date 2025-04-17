@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from Map import Map
 from Player import Player
@@ -15,7 +17,12 @@ class GameEngine:
         self.cleared_level = False
         self.entered_new_level = True
 
-        self.enemy = Enemy(parameters["entity_width"], parameters["entity_height"], 100,300, False)
+        self.enemies = []
+        which = bool(random.randint(0, 1))
+        self.first_enemy = Enemy(parameters["entity_width"], parameters["entity_height"], 100,300, which)
+        self.second_enemy = Enemy(parameters["entity_width"], parameters["entity_height"], 200, 300, not which)
+        self.enemies.append(self.first_enemy)
+        self.enemies.append(self.second_enemy)
         self.enemy_is_dead = False
 
 
@@ -24,9 +31,11 @@ class GameEngine:
         self.player.render(surf)
         self.map.render_back_wall(surf)
         if self.enemy_is_dead:
-            self.enemy.render_dead(surf)
+            for enemy in self.enemies:
+                enemy.render_dead(surf)
         else:
-            self.enemy.render(surf)
+            for enemy in self.enemies:
+                enemy.render(surf)
 
     def run(self, clock,surf,show_menu):
         running = True
