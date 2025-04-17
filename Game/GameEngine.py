@@ -61,7 +61,13 @@ class GameEngine:
                     return sc
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and not self.entered_new_level:
-                        self.enemies_are_dead[self.chosen_enemy] = True
+                        if self.method == Method.spare:
+                            for i in range(len(self.enemies)):
+                                if i == self.chosen_enemy:
+                                    continue
+                                self.enemies_are_dead[i] = True
+                        else:
+                            self.enemies_are_dead[self.chosen_enemy] = True
                         # self.cleared_level = True
                         # self.enemy_is_dead = True
                     elif event.key == pygame.K_ESCAPE:
