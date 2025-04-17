@@ -2,7 +2,6 @@ import pygame
 from Map import Map
 from Player import Player
 from Enemy import Enemy
-import pygame
 from show_screen import ShowScreen
 from text_font import TextFont
 from enum import Enum
@@ -27,7 +26,7 @@ class GameEngine:
         self.enemies_gap = parameters["entity_width"] + 20
         self.enemies = []
         self.enemies_are_dead = []
-        self.text_font = TextFont(12,16,1)
+        self.text_font = TextFont(24,32,2)
 
         # logika gracza
         self.chosen_enemy = 0
@@ -45,9 +44,10 @@ class GameEngine:
             else:
                 if i == self.chosen_enemy:
                     self.enemies[i].render_choose(surf,bool(self.method.value))
-                self.enemies[i].render(surf)
+                else:
+                    self.enemies[i].render(surf)
 
-        self.text_font.render_string(f"score =  {self.score}",surf,pos=(0,0))
+        self.text_font.render_string(f"score={self.score}",surf,pos=(0,0))
 
     def run(self, clock,surf,sc):
         running = True
@@ -70,6 +70,7 @@ class GameEngine:
                             self.enemies_are_dead[self.chosen_enemy] = True
                         # self.cleared_level = True
                         # self.enemy_is_dead = True
+                        self.player.gunshot_sound.play()
                     elif event.key == pygame.K_ESCAPE:
                         running = False
                         sc = ShowScreen.show_menu

@@ -29,14 +29,16 @@ class TextFont:
         self.gap_width = gap_width#1
 
     def render_digit(self,n,surf,pos):
-        digit_sheet_x_pos = n * (self.characters_width + self.gap_width)
-        temp_surf = self.numbers_img.subsurface(digit_sheet_x_pos,0,self.characters_width,self.characters_height)
+        digit_sheet_x_pos = n * (13)
+        temp_surf = self.numbers_img.subsurface(digit_sheet_x_pos,0,12,16)
+        temp_surf = pygame.transform.scale(temp_surf,(self.characters_width,self.characters_height))
         surf.blit(temp_surf,pos)
 
     def render_character(self,char,surf,pos):
         c = char.lower()
-        charcter_sheet_x_pos = ((ord(c) - 97) * (self.characters_width + self.gap_width))
-        temp_surf = self.letters_img.subsurface(charcter_sheet_x_pos,0,self.characters_width,self.characters_height)
+        charcter_sheet_x_pos = ((ord(c) - 97) * (13))
+        temp_surf = self.letters_img.subsurface(charcter_sheet_x_pos,0,12,16)
+        temp_surf = pygame.transform.scale(temp_surf, (self.characters_width, self.characters_height))
         surf.blit(temp_surf,pos)
 
     def render_symbol(self,s,surf,pos):
@@ -46,12 +48,13 @@ class TextFont:
         symbol_sheet_x_pos = -1
         for e in symbols:
             if e.value[0] == ascii_s:
-                symbol_sheet_x_pos = (e.value[1] * (self.characters_width + self.gap_width))
+                symbol_sheet_x_pos = (e.value[1] * (13))
                 break
         if symbol_sheet_x_pos == -1:
             print("there is no symbol found in the sheet\n")
             return
-        temp_surf = self.symbols_img.subsurface(symbol_sheet_x_pos,0,self.characters_width,self.characters_height)
+        temp_surf = self.symbols_img.subsurface(symbol_sheet_x_pos,0,12,16)
+        temp_surf = pygame.transform.scale(temp_surf, (self.characters_width, self.characters_height))
         surf.blit(temp_surf,pos)
 
 
