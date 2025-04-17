@@ -35,6 +35,7 @@ class Game:
                 case ShowScreen.show_menu:
                     sc = self.Menu.show(self.clock, self.screen, sc)
                 case ShowScreen.show_game:
+                    self.GameEngine = GameEngine(self.parameters)
                     sc = self.GameEngine.run(self.clock,self.screen,sc)
                 case _:
                     break
