@@ -37,8 +37,9 @@ class Game:
                 case ShowScreen.show_menu:
                     pygame.mixer.music.play(-1,fade_ms=5000)
                     sc = self.Menu.show(self.clock, self.screen, sc)
-                    pygame.mixer.music.fadeout(1500)
+
                 case ShowScreen.show_game:
+                    pygame.mixer.music.fadeout(2500)
                     self.GameEngine = GameEngine(self.parameters)
                     sc = self.GameEngine.run(self.clock,self.screen,sc)
                 case _:
