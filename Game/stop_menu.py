@@ -79,7 +79,10 @@ class StopMenu:
                     elif self.clicicked_on_return(x,y):
                         running = False
                         return 2
-
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                        return 1
             self.render(surf)
             pygame.display.update()
             clock.tick(60)
