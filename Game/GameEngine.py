@@ -7,6 +7,7 @@ from text_font import TextFont
 from enum import Enum
 from random import randint
 from heart_points import HP
+from stop_menu import StopMenu
 
 class Method(Enum):
     kill = 1
@@ -39,6 +40,9 @@ class GameEngine:
 
         # obsluga hp
         self.hp = HP(3,32,32,(0,0))
+
+        #stop menu
+        self.stop_menu = StopMenu(220,400,(210,40),self.score)
 
 
     def chose_next(self):
@@ -102,78 +106,97 @@ class GameEngine:
 
     def run(self, clock,surf,sc):
         running = True
+        run_game = True
+        run_stop = False
         # dest = [self.player.img_pos[0] + self.player.width/2, self.player.img_pos[1] + self.player.height/2]
         while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    sc = None
-                    pygame.quit()
-                    return sc
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE and not self.entered_new_level:
-                        if self.method == Method.spare:
-                            for i in range(len(self.enemies)):
-                                if i == self.chosen_enemy:
-                                    continue
-                                self.enemies_are_dead[i] = True
-                                self.alive_ones.remove(i)
-                        else:
-                            self.enemies_are_dead[self.chosen_enemy] = True
-                            if not self.enemies[self.chosen_enemy].is_impostor:
-                                self.hp.lose_hp()
-                            self.alive_ones.remove(self.chosen_enemy)
-                            self.chose_next()
-                        # self.cleared_level = True
-                        # self.enemy_is_dead = True
-                        self.player.gunshot_sound.play()
-                    elif event.key == pygame.K_ESCAPE:
+            while run_game:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
                         running = False
-                        sc = ShowScreen.show_menu
-                        self.player.appear_at(self.map.player_start_pos[0], self.map.player_start_pos[1])
+                        sc = None
+                        pygame.quit()
+                        return sc
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_SPACE and not self.entered_new_level:
+                            if self.method == Method.spare:
+                                for i in range(len(self.enemies)):
+                                    if i == self.chosen_enemy:
+                                        continue
+                                    self.enemies_are_dead[i] = True
+                                    self.alive_ones.remove(i)
+                            else:
+                                self.enemies_are_dead[self.chosen_enemy] = True
+                                if not self.enemies[self.chosen_enemy].is_impostor:
+                                    self.hp.lose_hp()
+                                self.alive_ones.remove(self.chosen_enemy)
+                                self.chose_next()
+                            # self.cleared_level = True
+                            # self.enemy_is_dead = True
+                            self.player.gunshot_sound.play()
+                        elif event.key == pygame.K_ESCAPE:
+                            run_game = False
+                            run_stop = True
+                            continue
+                            # sc = ShowScreen.show_menu
+                            # self.player.appear_at(self.map.player_start_pos[0], self.map.player_start_pos[1])
+                            # self.cleared_level = False
+                            # self.entered_new_level = True
+                        elif event.key == pygame.K_LEFT:
+                            self.chose_prev()
+                        elif event.key == pygame.K_RIGHT:
+                            self.chose_next()
+                        elif event.key == pygame.K_UP:
+                            self.method = Method.kill if self.method != Method.kill else Method.spare
+                        elif event.key == pygame.K_DOWN:
+                            self.method = Method.spare if self.method == Method.kill else Method.kill
+                    # if event.type == pygame.MOUSEBUTTONDOWN:
+                    #     dest[0],dest[1] = pygame.mouse.get_pos()
+
+                if not self.entered_new_level and not False in self.enemies_are_dead:
+                    self.cleared_level = True
+
+
+                if self.entered_new_level:
+                    dest_x,dest_y = self.map.player_shooting_pos
+                    self.enemy_is_dead = False
+                    if self.player.move_to(dest_x,dest_y):
+                        self.entered_new_level = False
+                        self.enemies = [
+                            Enemy(self.parameters["entity_width"], self.parameters["entity_height"], self.enemies_start_pos[0] + self.enemies_gap * i, self.enemies_start_pos[1],
+                                  bool(randint(0, 1))) for i in range(randint(3, 5))]
+                        self.enemies_are_dead = [False for _ in range(len(self.enemies))]
+                        self.alive_ones = [i for i in range(len(self.enemies))]
+
+                if self.cleared_level:
+                    dest_x,dest_y = self.map.player_end_pos
+                    if self.player.move_to(dest_x,dest_y):
+                        self.chosen_enemy = 0
+                        self.score += 50
                         self.cleared_level = False
                         self.entered_new_level = True
-                        return sc
-                    elif event.key == pygame.K_LEFT:
-                        self.chose_prev()
-                    elif event.key == pygame.K_RIGHT:
-                        self.chose_next()
-                    elif event.key == pygame.K_UP:
-                        self.method = Method.kill if self.method != Method.kill else Method.spare
-                    elif event.key == pygame.K_DOWN:
-                        self.method = Method.spare if self.method == Method.kill else Method.kill
-                # if event.type == pygame.MOUSEBUTTONDOWN:
-                #     dest[0],dest[1] = pygame.mouse.get_pos()
+                        self.player.appear_at(self.map.player_start_pos[0], self.map.player_start_pos[1])
 
-            if not self.entered_new_level and not False in self.enemies_are_dead:
-                self.cleared_level = True
+                self.render(surf)
+
+                # self.player.move_to(dest[0],dest[1])
+                pygame.display.update()
+                clock.tick(self.fps)
+
+            while run_stop:
+                self.stop_menu.score = self.score
+                x = self.stop_menu.show(clock,surf,sc)
+                if x == 1:
+                    run_game = True
+                    run_stop = False
+                elif x == 2:
+                    run_stop = False
+                    running = False
+                    return ShowScreen.show_menu
+                else:
+                    return None
 
 
-            if self.entered_new_level:
-                dest_x,dest_y = self.map.player_shooting_pos
-                self.enemy_is_dead = False
-                if self.player.move_to(dest_x,dest_y):
-                    self.entered_new_level = False
-                    self.enemies = [
-                        Enemy(self.parameters["entity_width"], self.parameters["entity_height"], self.enemies_start_pos[0] + self.enemies_gap * i, self.enemies_start_pos[1],
-                              bool(randint(0, 1))) for i in range(randint(3, 5))]
-                    self.enemies_are_dead = [False for _ in range(len(self.enemies))]
-                    self.alive_ones = [i for i in range(len(self.enemies))]
-
-            if self.cleared_level:
-                dest_x,dest_y = self.map.player_end_pos
-                if self.player.move_to(dest_x,dest_y):
-                    self.chosen_enemy = 0
-                    self.score += 50
-                    self.cleared_level = False
-                    self.entered_new_level = True
-                    self.player.appear_at(self.map.player_start_pos[0], self.map.player_start_pos[1])
-
-            self.render(surf)
-
-            # self.player.move_to(dest[0],dest[1])
-            pygame.display.update()
-            clock.tick(self.fps)
         sc = None
         return sc
 
