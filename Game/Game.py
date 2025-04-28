@@ -26,15 +26,20 @@ class Game:
         self.Menu = Menu(self.parameters["menu_width"],self.parameters["menu_height"],self.parameters["play_button_pos"],self.parameters["score_button_pos"])
 
 
+
     def run(self):
         # dest = [self.GameEngine.player.img_pos[0]/2,self.GameEngine.player.img_pos[1]/2]
 
         sc = ShowScreen.show_menu
+        pygame.mixer.music.load('./Sounds/wind__artic__cold-6195.mp3')
         while sc:
             match sc:
                 case ShowScreen.show_menu:
+                    pygame.mixer.music.play(-1,fade_ms=5000)
                     sc = self.Menu.show(self.clock, self.screen, sc)
+
                 case ShowScreen.show_game:
+                    pygame.mixer.music.fadeout(2500)
                     self.GameEngine = GameEngine(self.parameters)
                     sc = self.GameEngine.run(self.clock,self.screen,sc)
                 case _:

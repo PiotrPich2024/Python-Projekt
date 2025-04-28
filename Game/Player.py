@@ -8,7 +8,8 @@ class Player:
         self.height = height
         self.img_pos = [x,y]
         self.velocity = velocity
-
+        self.gunshot_sound = pygame.mixer.Sound('./Sounds/Player/silenced-gunshot-81063.mp3')
+        self.gunshot_sound.set_volume(0.1)
 
     def move_to(self,dest_x,dest_y):
         x,y = self.img_pos[0]+self.width/2,self.img_pos[1]+self.height/2

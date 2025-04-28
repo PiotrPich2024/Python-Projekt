@@ -25,7 +25,9 @@ class Map:
 
 
     def render_map(self,surf):
-        surf.blit(self.img, self.img_pos)
+        surface = pygame.Surface((surf.get_width(),surf.get_height()),pygame.SRCALPHA)
+        surface.blit(self.img, self.img_pos)
+        surf.blit(surface,self.img_pos)
 
 
     def render_back_wall(self,surf):

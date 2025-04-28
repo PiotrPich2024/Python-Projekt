@@ -1,3 +1,3 @@
-s = ['-','=','<','>','?']
-for sym in s:
-    print(ord(sym))
+txt = "hello there"
+x = txt.split()
+print(x)

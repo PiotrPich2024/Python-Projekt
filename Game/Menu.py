@@ -1,5 +1,6 @@
 import pygame
 from show_screen import ShowScreen
+from snow_generator import SnowGenerator
 
 class Menu:
     def __init__(self,width,height,play_button_pos,score_button_pos):
@@ -12,6 +13,9 @@ class Menu:
         self.img = pygame.image.load('Pixel art/Menu.png').convert()
         self.img = pygame.transform.scale(self.img, (self.width,self.height))
 
+        self.depth_img = pygame.image.load('Pixel art/menu_depth.png').convert_alpha()
+        self.depth_img = pygame.transform.scale(self.depth_img, (self.width,self.height))
+
         self.button_height = (55 * height)/480
         self.play_button_width = (132 * width)/640
         self.score_button_width = (138*width)/640
@@ -21,8 +25,12 @@ class Menu:
         self.score_button_img = pygame.image.load('Pixel art/score_button.png').convert()
         self.score_button_img = pygame.transform.scale(self.score_button_img,(self.score_button_width,self.button_height))
 
+        self.snow_g = SnowGenerator(self.width,self.height)
+
     def render(self,surf):
         surf.blit(self.img,(0,0))
+        self.snow_g.render(surf)
+        surf.blit(self.depth_img,(0,0))
         surf.blit(self.play_button_img,self.play_button_pos)
         surf.blit(self.score_button_img,self.score_button_pos)
 
