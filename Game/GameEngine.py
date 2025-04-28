@@ -118,7 +118,7 @@ class GameEngine:
                         pygame.quit()
                         return sc
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE and not self.entered_new_level:
+                        if event.key == pygame.K_SPACE and not self.entered_new_level and not self.cleared_level:
                             if self.method == Method.spare:
                                 for i in range(len(self.enemies)):
                                     if i == self.chosen_enemy:
@@ -153,7 +153,7 @@ class GameEngine:
                     # if event.type == pygame.MOUSEBUTTONDOWN:
                     #     dest[0],dest[1] = pygame.mouse.get_pos()
 
-                if not self.entered_new_level and not False in self.enemies_are_dead:
+                if not self.entered_new_level and not self.alive_ones:
                     self.cleared_level = True
 
 
