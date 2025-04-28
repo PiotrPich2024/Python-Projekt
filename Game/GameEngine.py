@@ -170,7 +170,7 @@ class GameEngine:
                     dest_x,dest_y = self.map.player_shooting_pos
                     self.enemy_is_dead = False
                     if self.player.move_to(dest_x,dest_y):
-                        number_of_enemies = randint(3,6)
+                        number_of_enemies = randint(3,5)
                         question, answer_index = generate_question(number_of_enemies,0)
                         self.entered_new_level = False
                         self.enemies = [
@@ -179,6 +179,7 @@ class GameEngine:
                         text = ""
                         for i in range(len(question)):
                             text += f"{i+1}.{intervals.get_interval_name(question[i])} "
+                        text += f"answer index - {answer_index}" # DEBUG ----------------
                         self.question_text = text
                         self.enemies_are_dead = [False for _ in range(number_of_enemies)]
                         self.alive_ones = [i for i in range(number_of_enemies)]
