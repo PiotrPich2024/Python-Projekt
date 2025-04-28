@@ -10,10 +10,17 @@ from heart_points import HP
 from stop_menu import StopMenu
 from question_generator import generate_question
 import intervals
+from game_over_screen import GameOver
 
 class Method(Enum):
     kill = 1
     spare = 0
+
+class GameStates(Enum):
+    run = 0
+    stop = 1
+    game_over = 2
+    go_to_menu = 3
 
 class GameEngine:
     def __init__(self,parameters):
@@ -31,7 +38,10 @@ class GameEngine:
         self.enemies = []
         self.enemies_are_dead = []
         self.alive_ones = []
-        self.text_font = TextFont(12,16,2)
+        self.text_font = TextFont(9,12,2)
+
+        self.game_state = GameStates.run
+        self.game_over_screen = GameOver(parameters["map_width"],parameters["map_height"])
 
         # logika gracza
         self.chosen_enemy = 0
@@ -50,7 +60,13 @@ class GameEngine:
 
         self.question_text = ""
 
+        self.fail_mul = 1
 
+    def reset(self):
+        self.score = 0
+        self.hp.curr_hp = self.hp.no_hp
+        self.cleared_level = False
+        self.entered_new_level = True
 
     def chose_next(self):
         if len(self.alive_ones) == 1:
@@ -91,6 +107,7 @@ class GameEngine:
             self.chosen_enemy = go_to
 
     def render(self,surf):
+
         self.map.render_map(surf)
         self.player.render(surf)
         self.map.render_back_wall(surf)
@@ -112,13 +129,26 @@ class GameEngine:
         surf.blit(text_surf,(440,100))
         self.hp.render(surf)
 
+    def check(self):
+        for index in self.alive_ones:
+            if self.enemies[index].is_impostor:
+                return False
+        return True
+
+    def failed_level(self):
+        for index in self.alive_ones:
+            if not self.enemies[index].is_impostor:
+                return False
+        return True
+
     def run(self, clock,surf,sc):
         running = True
-        run_game = True
-        run_stop = False
         # dest = [self.player.img_pos[0] + self.player.width/2, self.player.img_pos[1] + self.player.height/2]
         while running:
-            while run_game:
+            while self.game_state == GameStates.run:
+                if self.hp.curr_hp == 0:
+                    self.game_state = GameStates.game_over
+                    continue
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         running = False
@@ -143,8 +173,7 @@ class GameEngine:
                             # self.enemy_is_dead = True
                             self.player.gunshot_sound.play()
                         elif event.key == pygame.K_ESCAPE:
-                            run_game = False
-                            run_stop = True
+                            self.game_state = GameStates.stop
                             continue
                             # sc = ShowScreen.show_menu
                             # self.player.appear_at(self.map.player_start_pos[0], self.map.player_start_pos[1])
@@ -162,9 +191,12 @@ class GameEngine:
                     # if event.type == pygame.MOUSEBUTTONDOWN:
                     #     dest[0],dest[1] = pygame.mouse.get_pos()
 
-                if not self.entered_new_level and not self.alive_ones:
+                if not self.entered_new_level and self.check():
                     self.cleared_level = True
 
+                if not self.entered_new_level and self.failed_level():
+                    self.cleared_level = True
+                    self.fail_mul = 0
 
                 if self.entered_new_level:
                     dest_x,dest_y = self.map.player_shooting_pos
@@ -188,7 +220,8 @@ class GameEngine:
                     dest_x,dest_y = self.map.player_end_pos
                     if self.player.move_to(dest_x,dest_y):
                         self.chosen_enemy = 0
-                        self.score += 50
+                        self.score += 50 * self.fail_mul
+                        self.fail_mul = 1
                         self.cleared_level = False
                         self.entered_new_level = True
                         self.player.appear_at(self.map.player_start_pos[0], self.map.player_start_pos[1])
@@ -199,20 +232,39 @@ class GameEngine:
                 pygame.display.update()
                 clock.tick(self.fps)
 
-            while run_stop:
+            while self.game_state == GameStates.stop:
                 self.stop_menu.score = self.score
                 x = self.stop_menu.show(clock,surf,sc)
                 if x == 1:
-                    run_game = True
-                    run_stop = False
+                    self.game_state = GameStates.run
                 elif x == 2:
-                    run_stop = False
-                    running = False
+                    self.game_state = GameStates.go_to_menu
                     return ShowScreen.show_menu
                 else:
                     return None
 
+            while self.game_state == GameStates.game_over:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
+                        sc = None
+                        pygame.quit()
+                        return sc
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        match self.game_over_screen.play_again(pygame.mouse.get_pos()):
+                            case 0:
+                                self.reset()
+                                self.game_over_screen.reset()
+                                self.game_state = GameStates.run
+                            case 2:
+                                pass # do nothing
+                            case 3:
+                                self.game_state = GameStates.go_to_menu
+                                return ShowScreen.show_menu
 
-        sc = None
-        return sc
+                self.game_over_screen.render(surf)
+                pygame.display.update()
+                clock.tick(self.fps)
+
+        return None
 
