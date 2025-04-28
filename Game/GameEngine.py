@@ -118,14 +118,14 @@ class GameEngine:
                         pygame.quit()
                         return sc
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE and not self.entered_new_level and not self.cleared_level:
-                            if self.method == Method.spare:
-                                for i in range(len(self.enemies)):
+                        if event.key == pygame.K_SPACE and not self.entered_new_level and not self.cleared_level :
+                            if self.method == Method.spare and len(self.alive_ones) > 1:
+                                for i in self.alive_ones:
                                     if i == self.chosen_enemy:
                                         continue
                                     self.enemies_are_dead[i] = True
-                                    self.alive_ones.remove(i)
-                            else:
+                                self.alive_ones = [self.chosen_enemy]
+                            elif self.method == Method.kill:
                                 self.enemies_are_dead[self.chosen_enemy] = True
                                 if not self.enemies[self.chosen_enemy].is_impostor:
                                     self.hp.lose_hp()
@@ -142,14 +142,15 @@ class GameEngine:
                             # self.player.appear_at(self.map.player_start_pos[0], self.map.player_start_pos[1])
                             # self.cleared_level = False
                             # self.entered_new_level = True
-                        elif event.key == pygame.K_LEFT:
-                            self.chose_prev()
-                        elif event.key == pygame.K_RIGHT:
-                            self.chose_next()
-                        elif event.key == pygame.K_UP:
-                            self.method = Method.kill if self.method != Method.kill else Method.spare
-                        elif event.key == pygame.K_DOWN:
-                            self.method = Method.spare if self.method == Method.kill else Method.kill
+                        if not self.entered_new_level and not self.cleared_level:
+                            if event.key == pygame.K_LEFT:
+                                self.chose_prev()
+                            elif event.key == pygame.K_RIGHT:
+                                self.chose_next()
+                            elif event.key == pygame.K_UP:
+                                self.method = Method.kill if self.method != Method.kill else Method.spare
+                            elif event.key == pygame.K_DOWN:
+                                self.method = Method.spare if self.method == Method.kill else Method.kill
                     # if event.type == pygame.MOUSEBUTTONDOWN:
                     #     dest[0],dest[1] = pygame.mouse.get_pos()
 
