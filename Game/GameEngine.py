@@ -8,6 +8,8 @@ from enum import Enum
 from random import randint
 from heart_points import HP
 from stop_menu import StopMenu
+from question_generator import generate_question
+import intervals
 
 class Method(Enum):
     kill = 1
@@ -43,6 +45,11 @@ class GameEngine:
 
         #stop menu
         self.stop_menu = StopMenu(220,400,(210,40),self.score)
+
+        self.thread_pool = []
+
+        self.question_text = ""
+
 
 
     def chose_next(self):
@@ -100,7 +107,8 @@ class GameEngine:
         surf.blit(temp_surf,(440,20))
         # testowanie polepszonej wersji textfont
         text_surf = pygame.Surface((200,300))
-        self.text_font.render_string("sigma sigma boy sigma boy, nie wiem co tu innego pisac hellu",text_surf,pos=(0,50))
+        self.text_font.render_string(self.question_text,text_surf,pos=(0,50))
+
         surf.blit(text_surf,(440,100))
         self.hp.render(surf)
 
@@ -162,12 +170,18 @@ class GameEngine:
                     dest_x,dest_y = self.map.player_shooting_pos
                     self.enemy_is_dead = False
                     if self.player.move_to(dest_x,dest_y):
+                        number_of_enemies = randint(3,6)
+                        question, answer_index = generate_question(number_of_enemies,0)
                         self.entered_new_level = False
                         self.enemies = [
                             Enemy(self.parameters["entity_width"], self.parameters["entity_height"], self.enemies_start_pos[0] + self.enemies_gap * i, self.enemies_start_pos[1],
-                                  bool(randint(0, 1))) for i in range(randint(3, 5))]
-                        self.enemies_are_dead = [False for _ in range(len(self.enemies))]
-                        self.alive_ones = [i for i in range(len(self.enemies))]
+                                  not (i == answer_index)) for i in range(number_of_enemies)]
+                        text = ""
+                        for i in range(len(question)):
+                            text += f"{i+1}.{intervals.get_interval_name(question[i])} "
+                        self.question_text = text
+                        self.enemies_are_dead = [False for _ in range(number_of_enemies)]
+                        self.alive_ones = [i for i in range(number_of_enemies)]
 
                 if self.cleared_level:
                     dest_x,dest_y = self.map.player_end_pos

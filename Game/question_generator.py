@@ -1,7 +1,18 @@
 
 import SoundGenerator
 import random
+from text_font import TextFont
+import threading
 
+def play_interval_question(mode ,root_note, duration, interval_semitones, instrument):
+
+    match mode:
+        case 0:
+            SoundGenerator.play_interval_melodic_up(root_note, duration, interval_semitones, instrument)
+        case 1:
+            SoundGenerator.play_interval_melodic_down(root_note, duration, interval_semitones, instrument)
+        case 2:
+            SoundGenerator.play_interval_harmonic(root_note, duration, interval_semitones, instrument)
 
 def generate_interval_question(answer_no):
     if answer_no > 12:
@@ -23,15 +34,14 @@ def generate_interval_question(answer_no):
                     fake_semitones = 0
             answers.append(fake_semitones)
 
-    match random.randrange(3):
-        case 0:
-            SoundGenerator.play_interval_melodic_up(root_note, duration, interval_semitones, instrument)
-        case 1:
-            SoundGenerator.play_interval_melodic_down(root_note, duration, interval_semitones, instrument)
-        case 2:
-            SoundGenerator.play_interval_harmonic(root_note, duration, interval_semitones, instrument)
+    mode = random.randrange(3)
+    play_thread = threading.Thread(target=play_interval_question, args=(mode, root_note, duration, interval_semitones, instrument))
+    play_thread.start()
 
-    return answers
+    # text = TextFont(12,16,1)
+    # text.render_string("sdfsdf", surf, pos)
+
+    return answers, answer_index
 
 def generate_triad_question(answer_no):
     if answer_no > 10:
@@ -143,11 +153,11 @@ def generate_dominant_question(answer_no):
 def generate_question(answer_no, difficulty):
     match difficulty:
         case 0:
-            generate_interval_question(answer_no)
+            return generate_interval_question(answer_no)
         case 1:
-            generate_triad_question(answer_no)
+            return generate_triad_question(answer_no)
         case 2:
-            generate_dominant_question(answer_no)
+            return generate_dominant_question(answer_no)
         case default:
-            generate_interval_question(answer_no)
+            return generate_interval_question(answer_no)
 
