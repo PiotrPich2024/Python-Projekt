@@ -27,8 +27,8 @@ class Intervals(Enum):
     MAJOR_FOURTEENTH = 23
     PERFECT_FIFTEENTH = 24
 
-def get_interval_name(self):
-    match self.value:
+def get_interval_name(value):
+    match value:
         case 0:
             return "Perfect unison"
         case 1:

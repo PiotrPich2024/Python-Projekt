@@ -13,8 +13,8 @@ class Triads(Enum):
     AUGMENTED = 9
 
 
-def get_triad_name(self):
-    match self.value:
+def get_triad_name(value):
+    match value:
         case 0:
             return "Major triad root position"
         case 1:
