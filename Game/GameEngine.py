@@ -115,7 +115,7 @@ class GameEngine:
             if self.enemies_are_dead[i]:
                 self.enemies[i].render_dead(surf)
             else:
-                if i == self.chosen_enemy:
+                if i == self.chosen_enemy and not self.cleared_level and not self.entered_new_level:
                     self.enemies[i].render_choose(surf,bool(self.method.value))
                 else:
                     self.enemies[i].render(surf)

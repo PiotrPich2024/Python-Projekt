@@ -16,10 +16,10 @@ class GameOver:
 
         self.x_mult = width/640
         self.y_mult = height/480
-        self.game_over_pos = (158 * self.x_mult, 380 * self.y_mult)
-        self.play_again_pos = (260 * self.x_mult,437* self.y_mult)
-        self.yes_pos = (280 * self.x_mult,458*self.y_mult)
-        self.no_pos =  (336 * self.x_mult,458*self.y_mult)
+        self.game_over_pos = (158 * self.x_mult, 330 * self.y_mult)
+        self.play_again_pos = (260 * self.x_mult,387* self.y_mult)
+        self.yes_pos = (280 * self.x_mult,408*self.y_mult)
+        self.no_pos =  (336 * self.x_mult,408*self.y_mult)
 
         self.text_transparency = 0
 
@@ -27,11 +27,6 @@ class GameOver:
         self.temp_surf_play_again = pygame.Surface((120,16))
         self.temp_surf_yes = pygame.Surface((36,16))
         self.temp_surf_no = pygame.Surface((24,16))
-
-        self.game_over_font.render_string("game over",self.temp_surf_over,(0,0))
-        self.buttons_font.render_string("play again",self.temp_surf_play_again,(0,0))
-        self.buttons_font.render_string("yes",self.temp_surf_yes,(0,0))
-        self.buttons_font.render_string("no",self.temp_surf_no,(0,0))
 
         self.yes_button = Button(self.temp_surf_yes,self.yes_pos)
         self.no_button = Button(self.temp_surf_no,self.no_pos)

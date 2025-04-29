@@ -88,7 +88,7 @@ class TextFont:
             lines.append(current_line)
 
         if len(lines) > max_lines:
-            print("zmniejsz czcionkę, słowa się nie mieszczą!")
+            print("słowa się nie mieszczą dla: "+s)
             return []
 
         return lines
