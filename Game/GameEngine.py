@@ -1,7 +1,7 @@
 import pygame
 from Map import Map
-from Player import Player
-from Enemy import Enemy
+from Game.Entity.player import Player
+from Game.Entity.enemy import Enemy
 from show_screen import ShowScreen
 from text_font import TextFont
 from enum import Enum

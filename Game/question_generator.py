@@ -6,18 +6,18 @@ import threading
 
 def play_interval_question(mode ,root_note, duration, interval_semitones, instrument):
 
-    match mode:
-        case 0:
-            SoundGenerator.play_interval_melodic_up(root_note, duration, interval_semitones, instrument)
-        case 1:
-            SoundGenerator.play_interval_melodic_down(root_note, duration, interval_semitones, instrument)
-        case 2:
-            SoundGenerator.play_interval_harmonic(root_note, duration, interval_semitones, instrument)
+    interval_functions = {
+        0: [SoundGenerator.play_interval_harmonic],
+        1: [SoundGenerator.play_interval_melodic_up],
+        2: [SoundGenerator.play_interval_melodic_down],
+    }
+
+    random.choice(interval_functions[mode])(root_note, duration, interval_semitones, instrument)
 
 def generate_interval_question(answer_no):
     if answer_no > 12:
         answer_no = 12
-    root_note = random.randrange(21, 101)
+    root_note = random.randrange(41, 81)
     interval_semitones = random.randrange(13)
     instrument = 0
     duration = 3
@@ -46,7 +46,7 @@ def generate_interval_question(answer_no):
 def generate_triad_question(answer_no):
     if answer_no > 10:
         answer_no = 10
-    root_note = random.randrange(21, 101)
+    root_note = random.randrange(41, 81)
     triad_code = random.randrange(10)
     instrument = 0
     duration = 3
