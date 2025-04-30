@@ -2,13 +2,13 @@ import pygame
 
 class Player:
     def __init__(self,width,height,x,y,velocity):
-        self.img = pygame.image.load('Pixel art/Player/player.png').convert_alpha()
+        self.img = pygame.image.load('../Pixel art/Player/player.png').convert_alpha()
         self.img = pygame.transform.scale(self.img, (width, height))
         self.width = width
         self.height = height
         self.img_pos = [x,y]
         self.velocity = velocity
-        self.gunshot_sound = pygame.mixer.Sound('./Sounds/Player/silenced-gunshot-81063.mp3')
+        self.gunshot_sound = pygame.mixer.Sound('../Sounds/Player/silenced-gunshot-81063.mp3')
         self.gunshot_sound.set_volume(0.1)
 
     def move_to(self,dest_x,dest_y):
