@@ -158,6 +158,6 @@ def generate_question(answer_no, difficulty):
             return generate_triad_question(answer_no)
         case 2:
             return generate_dominant_question(answer_no)
-        case default:
+        case _:
             return generate_interval_question(answer_no)
 
