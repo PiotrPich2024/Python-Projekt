@@ -2,19 +2,19 @@ import pygame
 from enum import Enum
 from random import randint
 
-from game.entity.player import Player
-from game.entity.enemy import Enemy
+from Game.entity.player import Player
+from Game.entity.enemy import Enemy
 
-from game.font.text_font import TextFont
-from game.questions import intervals
-from game.questions.question_generator import generate_question
-from game.screens.map import Map
-from game.screens.screen_elements.heart_points import HP
-from game.screens.show_screen import ShowScreen
+from Game.font.text_font import TextFont
+from Game.questions import intervals
+from Game.questions.question_generator import generate_question
+from Game.screens.map import Map
+from Game.screens.screen_elements.heart_points import HP
+from Game.screens.show_screen import ShowScreen
 
-from game.screens.stop_menu import StopMenu
+from Game.screens.stop_menu import StopMenu
 
-from game.screens.game_over_screen import GameOver
+from Game.screens.game_over_screen import GameOver
 
 class Method(Enum):
     kill = 1

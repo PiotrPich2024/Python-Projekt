@@ -2,7 +2,7 @@ import pygame
 
 class Map:
     def __init__(self,width,height):
-        self.img = pygame.image.load('../..//pixel_art/map.png').convert()
+        self.img = pygame.image.load('./pixel_art/map.png').convert()
         self.img = pygame.transform.scale(self.img, (width, height))
 
         self.width = width
@@ -10,7 +10,7 @@ class Map:
 
         self.img_pos = [0,0]
         self.back_wall_pos = [0,(height * 53)/60]
-        self.img_back_wall = pygame.image.load('../../pixel_art/backwall.png').convert_alpha()
+        self.img_back_wall = pygame.image.load('./pixel_art/backwall.png').convert_alpha()
         self.img_back_wall = pygame.transform.scale(self.img_back_wall, (width, (height * 7)/60))
 
 

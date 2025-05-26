@@ -1,7 +1,7 @@
 import pygame
 
-from game.particles.snow_generator import SnowGenerator
-from game.screens.show_screen import ShowScreen
+from Game.particles.snow_generator import SnowGenerator
+from Game.screens.show_screen import ShowScreen
 
 
 class Menu:
@@ -12,19 +12,19 @@ class Menu:
         self.play_button_pos = list(play_button_pos)
         self.score_button_pos = list(score_button_pos)
 
-        self.img = pygame.image.load('../../pixel_art/Menu.png').convert()
+        self.img = pygame.image.load('./pixel_art/Menu.png').convert()
         self.img = pygame.transform.scale(self.img, (self.width,self.height))
 
-        self.depth_img = pygame.image.load('../../pixel_art/menu_depth.png').convert_alpha()
+        self.depth_img = pygame.image.load('./pixel_art/menu_depth.png').convert_alpha()
         self.depth_img = pygame.transform.scale(self.depth_img, (self.width,self.height))
 
         self.button_height = (55 * height)/480
         self.play_button_width = (132 * width)/640
         self.score_button_width = (138*width)/640
 
-        self.play_button_img = pygame.image.load('../../pixel_art/play_button.png').convert()
+        self.play_button_img = pygame.image.load('./pixel_art/play_button.png').convert()
         self.play_button_img = pygame.transform.scale(self.play_button_img,(self.play_button_width, self.button_height))
-        self.score_button_img = pygame.image.load('../../pixel_art/score_button.png').convert()
+        self.score_button_img = pygame.image.load('./pixel_art/score_button.png').convert()
         self.score_button_img = pygame.transform.scale(self.score_button_img,(self.score_button_width,self.button_height))
 
         self.snow_g = SnowGenerator(self.width,self.height)

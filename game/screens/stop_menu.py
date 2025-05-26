@@ -1,6 +1,6 @@
 import pygame
 
-from game.font.text_font import TextFont
+from Game.font.text_font import TextFont
 
 
 class StopMenuInfo:

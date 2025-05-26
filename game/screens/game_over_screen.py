@@ -1,14 +1,14 @@
 import pygame
 
-from game.font.text_font import TextFont
-from game.screens.screen_elements.button_class import Button
+from Game.font.text_font import TextFont
+from Game.screens.screen_elements.button_class import Button
 
 
 class GameOver:
     def __init__(self,width,height):
         self.h = height
         self.w = width
-        self.img = pygame.image.load('../../pixel_art/GameOverScreen.png').convert_alpha()
+        self.img = pygame.image.load('./pixel_art/GameOverScreen.png').convert_alpha()
         self.img = pygame.transform.scale(self.img,(width,height))
         self.transparency = 0
         self.pace_of_change = 1

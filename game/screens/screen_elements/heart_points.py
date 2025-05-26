@@ -4,8 +4,8 @@ class HP:
     def __init__(self,no_hp,width,height,pos):
         self.width = width
         self.height = height
-        self.full_img = pygame.image.load('../../../pixel_art/full_heart.png').convert_alpha()
-        self.empty_img = pygame.image.load('../../../pixel_art/empty_heart.png').convert_alpha()
+        self.full_img = pygame.image.load('./pixel_art/full_heart.png').convert_alpha()
+        self.empty_img = pygame.image.load('./pixel_art/empty_heart.png').convert_alpha()
         self.full_img = pygame.transform.scale(self.full_img,(width,height))
         self.empty_img = pygame.transform.scale(self.empty_img, (width, height))
         self.curr_hp = no_hp

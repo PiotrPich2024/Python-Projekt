@@ -1,10 +1,7 @@
 
 import random
 import threading
-
-
-class SoundGenerator:
-    pass
+import Game.questions.sound_generator as SoundGenerator
 
 
 def play_interval_question(mode ,root_note, duration, interval_semitones, instrument):

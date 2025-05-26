@@ -1,9 +1,9 @@
 import pygame
 import json
 
-from game.game_loop.game_engine import GameEngine
-from game.screens import show_screen
-from game.screens.menu import Menu
+from Game.game_loop.game_engine import GameEngine
+from Game.screens.show_screen import ShowScreen
+from Game.screens.menu import Menu
 
 
 class Game:
@@ -31,15 +31,15 @@ class Game:
     def run(self):
         # dest = [self.GameEngine.player.img_pos[0]/2,self.GameEngine.player.img_pos[1]/2]
 
-        sc = show_screen.show_menu
+        sc = ShowScreen.show_menu
         pygame.mixer.music.load('game/Sounds/wind__artic__cold-6195.mp3')
         while sc:
             match sc:
-                case show_screen.show_menu:
+                case ShowScreen.show_menu:
                     pygame.mixer.music.play(-1,fade_ms=5000)
                     sc = self.Menu.show(self.clock, self.screen, sc)
 
-                case show_screen.show_game:
+                case ShowScreen.show_game:
                     pygame.mixer.music.fadeout(2500)
                     self.GameEngine = GameEngine(self.parameters)
                     sc = self.GameEngine.run(self.clock,self.screen,sc)
