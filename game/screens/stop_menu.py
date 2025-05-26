@@ -1,5 +1,7 @@
 import pygame
-from text_font import TextFont
+
+from game.font.text_font import TextFont
+
 
 class StopMenuInfo:
     menu_widht = 220

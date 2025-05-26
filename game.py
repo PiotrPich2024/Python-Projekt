@@ -1,19 +1,20 @@
 import pygame
-from GameEngine import GameEngine
 import json
-from Menu import Menu
-from show_screen import ShowScreen
+
+from game.game_loop.game_engine import GameEngine
+from game.screens import show_screen
+from game.screens.menu import Menu
 
 
 class Game:
     def __init__(self,size_id):
         pygame.init()
         pygame.display.set_caption('FREQUENCIES OF FEAR')
-        gameIcon = pygame.image.load('Pixel art/logo.png')
+        gameIcon = pygame.image.load('pixel_art/logo.png')
         pygame.display.set_icon(pygame.transform.scale(gameIcon,(32,32)))
 
 
-        with open('../Parameters.JSON','r') as file:
+        with open('Parameters.JSON', 'r') as file:
             data = json.load(file)
         self.parameters = next((item for item in data['sizes'] if item['size_id'] == size_id),None)
         if not self.parameters:
@@ -30,15 +31,15 @@ class Game:
     def run(self):
         # dest = [self.GameEngine.player.img_pos[0]/2,self.GameEngine.player.img_pos[1]/2]
 
-        sc = ShowScreen.show_menu
-        pygame.mixer.music.load('./Sounds/wind__artic__cold-6195.mp3')
+        sc = show_screen.show_menu
+        pygame.mixer.music.load('game/Sounds/wind__artic__cold-6195.mp3')
         while sc:
             match sc:
-                case ShowScreen.show_menu:
+                case show_screen.show_menu:
                     pygame.mixer.music.play(-1,fade_ms=5000)
                     sc = self.Menu.show(self.clock, self.screen, sc)
 
-                case ShowScreen.show_game:
+                case show_screen.show_game:
                     pygame.mixer.music.fadeout(2500)
                     self.GameEngine = GameEngine(self.parameters)
                     sc = self.GameEngine.run(self.clock,self.screen,sc)

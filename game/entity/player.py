@@ -2,7 +2,7 @@ import pygame
 
 class Player:
     def __init__(self,width,height,x,y,velocity):
-        self.img = pygame.image.load('../Pixel art/Player/player.png').convert_alpha()
+        self.img = pygame.image.load('../../pixel_art/player/player.png').convert_alpha()
         self.img = pygame.transform.scale(self.img, (width, height))
         self.width = width
         self.height = height
