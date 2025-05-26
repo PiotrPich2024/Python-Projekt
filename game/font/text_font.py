@@ -26,9 +26,9 @@ class symbols(Enum):
 
 class TextFont:
     def __init__(self,width,height,gap_width):
-        self.letters_img = pygame.image.load('../../pixel_art/fonts/Letters.png').convert()
-        self.numbers_img = pygame.image.load('../../pixel_art/fonts/numbers.png').convert()
-        self.symbols_img = pygame.image.load('../../pixel_art/fonts/symbols.png').convert()
+        self.letters_img = pygame.image.load('pixel_art/fonts/Letters.png').convert()
+        self.numbers_img = pygame.image.load('pixel_art/fonts/numbers.png').convert()
+        self.symbols_img = pygame.image.load('pixel_art/fonts/symbols.png').convert()
 
         self.characters_width = width #12
         self.characters_height = height #16

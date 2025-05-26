@@ -8,7 +8,7 @@ class GameOver:
     def __init__(self,width,height):
         self.h = height
         self.w = width
-        self.img = pygame.image.load('../../pixel_art/GameOverScreen.png').convert_alpha()
+        self.img = pygame.image.load('pixel_art/GameOverScreen.png').convert_alpha()
         self.img = pygame.transform.scale(self.img,(width,height))
         self.transparency = 0
         self.pace_of_change = 1

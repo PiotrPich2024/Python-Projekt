@@ -9,7 +9,7 @@ class Snow:
         self.direction_x = direction[0]
         self.direction_y = direction[1]
         self.velocity = velocity
-        self.img = pygame.image.load('../../pixel_art/particles/snow.png').convert_alpha()
+        self.img = pygame.image.load('pixel_art/particles/snow.png').convert_alpha()
         self.img = pygame.transform.scale(self.img,(width,height))
 
         self.max_transparency = 255
