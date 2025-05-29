@@ -1,16 +1,21 @@
 import pygame
-from Map import Map
-from Game.Entity.player import Player
-from Game.Entity.enemy import Enemy
-from show_screen import ShowScreen
-from text_font import TextFont
 from enum import Enum
 from random import randint
-from heart_points import HP
-from stop_menu import StopMenu
-from question_generator import generate_question
-import intervals
-from game_over_screen import GameOver
+import json
+
+from Game.entity.player import Player
+from Game.entity.enemy import Enemy
+
+from Game.font.text_font import TextFont
+from Game.questions import intervals
+from Game.questions.question_generator import generate_question
+from Game.screens.map import Map
+from Game.screens.screen_elements.heart_points import HP
+from Game.screens.show_screen import ShowScreen
+
+from Game.screens.stop_menu import StopMenu
+
+from Game.screens.game_over_screen import GameOver
 
 class Method(Enum):
     kill = 1
@@ -23,7 +28,7 @@ class GameStates(Enum):
     go_to_menu = 3
 
 class GameEngine:
-    def __init__(self,parameters):
+    def __init__(self,parameters, scores):
         self.parameters = parameters
         self.map = Map(parameters["map_width"],parameters["map_height"])
         self.player = Player(parameters["entity_width"], parameters["entity_height"], 0,0,
@@ -61,6 +66,17 @@ class GameEngine:
         self.question_text = ""
 
         self.fail_mul = 1
+
+        self.scores = scores
+
+
+    def write_scores(self):
+        arr = [self.scores["first"],self.scores["second"],self.scores["third"],self.score]
+        arr.sort(reverse=True)
+        self.scores["first"],self.scores["second"],self.scores["third"] = arr[:3]
+        with open('Scores.json', 'w') as file:
+            json.dump(self.scores, file, indent=4)
+
 
     def reset(self):
         self.score = 0
@@ -148,12 +164,13 @@ class GameEngine:
             while self.game_state == GameStates.run:
                 if self.hp.curr_hp == 0:
                     self.game_state = GameStates.game_over
+                    self.write_scores()
                     continue
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         running = False
                         sc = None
-                        pygame.quit()
+
                         return sc
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE and not self.entered_new_level and not self.cleared_level :
@@ -238,6 +255,7 @@ class GameEngine:
                 if x == 1:
                     self.game_state = GameStates.run
                 elif x == 2:
+                    self.write_scores()
                     self.game_state = GameStates.go_to_menu
                     return ShowScreen.show_menu
                 else:
@@ -248,7 +266,7 @@ class GameEngine:
                     if event.type == pygame.QUIT:
                         running = False
                         sc = None
-                        pygame.quit()
+
                         return sc
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         match self.game_over_screen.play_again(pygame.mouse.get_pos()):

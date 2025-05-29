@@ -1,8 +1,8 @@
 
-import SoundGenerator
 import random
-from text_font import TextFont
 import threading
+import Game.questions.sound_generator as SoundGenerator
+
 
 def play_interval_question(mode ,root_note, duration, interval_semitones, instrument):
 

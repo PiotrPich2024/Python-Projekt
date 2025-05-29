@@ -1,5 +1,4 @@
-import pygame
-from snow import Snow
+from Game.particles.snow import Snow
 from random import randint
 
 class SnowGenerator:
