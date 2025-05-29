@@ -38,7 +38,7 @@ class ScoreScreen:
 
         temp_surf = pygame.Surface((72,16))
 
-        self.go_back_button = Button(temp_surf,(self.font_start_pos[0], self.font_start_pos[1] + 300))
+        self.go_back_button = Button(temp_surf,(self.font_start_pos[0] + 50, self.font_start_pos[1] + 300))
 
         self.temp_surf_score = pygame.Surface((324, 48))
         self.temp_surf_1 = pygame.Surface((120, 16))
@@ -53,7 +53,7 @@ class ScoreScreen:
         self.middle_font.render_string(f"1st. {self.best_score}",surf, (self.font_start_pos[0], self.font_start_pos[1] + 100))
         self.middle_font.render_string(f"2nd. {self.second_score}",surf, (self.font_start_pos[0], self.font_start_pos[1] + 150))
         self.middle_font.render_string(f"3rd. {self.third_score}",surf, (self.font_start_pos[0], self.font_start_pos[1] + 200))
-        self.smaller_font.render_string("return",surf,(self.font_start_pos[0], self.font_start_pos[1] + 300))
+        self.smaller_font.render_string("return",surf,(self.font_start_pos[0] + 50, self.font_start_pos[1] + 300))
 
 
     def show(self, clock,surf):
