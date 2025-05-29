@@ -53,7 +53,7 @@ class Menu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                    pygame.quit()
+
                     sc = None
                     return sc
                 if event.type == pygame.MOUSEBUTTONDOWN:
