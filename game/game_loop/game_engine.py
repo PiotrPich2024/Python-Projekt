@@ -1,3 +1,5 @@
+import threading
+
 import pygame
 from enum import Enum
 from random import randint
@@ -68,6 +70,10 @@ class GameEngine:
         self.fail_mul = 1
 
         self.scores = scores
+
+        # argumenty do ponownego zagrania pytania
+        self.target = None
+        self.args = None
 
 
     def write_scores(self):
@@ -205,11 +211,14 @@ class GameEngine:
                                 self.method = Method.kill if self.method != Method.kill else Method.spare
                             elif event.key == pygame.K_DOWN:
                                 self.method = Method.spare if self.method == Method.kill else Method.kill
-                    # if event.type == pygame.MOUSEBUTTONDOWN:
-                    #     dest[0],dest[1] = pygame.mouse.get_pos()
+                            elif event.key == pygame.K_r and self.target != None and self.args != None:
+                                play_thread = threading.Thread(target=self.target, args=self.args)
+                                play_thread.start()
 
                 if not self.entered_new_level and self.check():
                     self.cleared_level = True
+                    self.target = None
+                    self.args = None
 
                 if not self.entered_new_level and self.failed_level():
                     self.cleared_level = True
@@ -220,7 +229,8 @@ class GameEngine:
                     self.enemy_is_dead = False
                     if self.player.move_to(dest_x,dest_y):
                         number_of_enemies = randint(3,5)
-                        question, answer_index = generate_question(number_of_enemies,0)
+                        question, answer_index, self.target, self.args = generate_question(number_of_enemies,0)
+
                         self.entered_new_level = False
                         self.enemies = [
                             Enemy(self.parameters["entity_width"], self.parameters["entity_height"], self.enemies_start_pos[0] + self.enemies_gap * i, self.enemies_start_pos[1],
@@ -228,7 +238,7 @@ class GameEngine:
                         text = ""
                         for i in range(len(question)):
                             text += f"{i+1}.{intervals.get_interval_name(question[i])} "
-                        text += f"answer index - {answer_index}" # DEBUG ----------------
+                        # text += f"answer index - {answer_index}" # DEBUG ----------------
                         self.question_text = text
                         self.enemies_are_dead = [False for _ in range(number_of_enemies)]
                         self.alive_ones = [i for i in range(number_of_enemies)]

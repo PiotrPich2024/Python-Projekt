@@ -4,7 +4,7 @@ import threading
 import Game.questions.sound_generator as SoundGenerator
 
 
-def play_interval_question(mode ,root_note, duration, interval_semitones, instrument):
+def play_interval_question(mode, root_note, duration, interval_semitones, instrument):
 
     interval_functions = {
         0: [SoundGenerator.play_interval_harmonic],
@@ -40,8 +40,9 @@ def generate_interval_question(answer_no):
 
     # text = TextFont(12,16,1)
     # text.render_string("sdfsdf", surf, pos)
-
-    return answers, answer_index
+    target = play_interval_question
+    args = (mode, root_note, duration, interval_semitones, instrument)
+    return answers, answer_index, target, args
 
 def generate_triad_question(answer_no):
     if answer_no > 10:
