@@ -45,7 +45,7 @@ class StopMenu:
         temp_res.fill(pygame.Color("black"))
         temp_ret.fill(pygame.Color("black"))
         self.score_font.render_string(f"SCORE {self.score}",temp_score,(10,40))
-        self.button_font.render_string("return",temp_ret,(10,20))
+        self.button_font.render_string("back to menu",temp_ret,(10,20))
         self.button_font.render_string("resume",temp_res,(10,20))
         surf.blit(temp_surf,self.menu_pos)
         surf.blit(temp_score,(self.item_pos_x,self.score_pos_y))

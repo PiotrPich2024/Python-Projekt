@@ -185,6 +185,7 @@ class GameEngine:
                                     if i == self.chosen_enemy:
                                         continue
                                     self.enemies_are_dead[i] = True
+                                    if not self.enemies[i].is_impostor: self.hp.lose_hp()
                                 self.alive_ones = [self.chosen_enemy]
                             elif self.method == Method.kill:
                                 self.enemies_are_dead[self.chosen_enemy] = True
