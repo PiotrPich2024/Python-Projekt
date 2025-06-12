@@ -113,9 +113,9 @@ def choose_question(answer_no, difficulty_level=0, instrument=0, duration=3, low
 
     questions = {
         0: generate_question(answer_no, 13, instrument, duration, lowest_root_note, highest_root_note, play_interval_question),
-        1: generate_question(answer_no, 10, instrument, duration + 1, lowest_root_note, highest_root_note, play_triad_question),
-        2: generate_question(answer_no, 4, instrument, duration + 2, lowest_root_note, highest_root_note, play_d7_question),
-        3: generate_question(answer_no, 2, instrument, duration + 2, lowest_root_note, highest_root_note, play_d9_question),
+        1: generate_question(answer_no, 10, instrument, duration, lowest_root_note, highest_root_note, play_triad_question),
+        2: generate_question(answer_no, 4, instrument, duration, lowest_root_note, highest_root_note, play_d7_question),
+        3: generate_question(answer_no, 2, instrument, duration, lowest_root_note, highest_root_note, play_d9_question),
         4: generate_question(answer_no, 12, instrument, duration, lowest_root_note, highest_root_note, play_compound_interval_question),
     }
 
