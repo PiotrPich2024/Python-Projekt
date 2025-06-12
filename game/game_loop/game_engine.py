@@ -9,8 +9,8 @@ from Game.entity.player import Player
 from Game.entity.enemy import Enemy
 
 from Game.font.text_font import TextFont
-from Game.questions import intervals
-from Game.questions.question_generator import generate_question
+from Game.questions import names
+from Game.questions.question_generator import choose_question
 from Game.screens.map import Map
 from Game.screens.screen_elements.heart_points import HP
 from Game.screens.show_screen import ShowScreen
@@ -71,7 +71,8 @@ class GameEngine:
 
         self.scores = scores
 
-        # argumenty do ponownego zagrania pytania
+        # argumenty do grania (w tym do ponownego zagrania pytania)
+        self.is_playing = False
         self.target = None
         self.args = None
 
@@ -163,6 +164,9 @@ class GameEngine:
                 return False
         return True
 
+    def set_is_playing(self, state):
+        self.is_playing = state
+
     def run(self, clock,surf,sc):
         running = True
         # dest = [self.player.img_pos[0] + self.player.width/2, self.player.img_pos[1] + self.player.height/2]
@@ -212,7 +216,8 @@ class GameEngine:
                                 self.method = Method.kill if self.method != Method.kill else Method.spare
                             elif event.key == pygame.K_DOWN:
                                 self.method = Method.spare if self.method == Method.kill else Method.kill
-                            elif event.key == pygame.K_r and self.target != None and self.args != None:
+                            elif event.key == pygame.K_r and self.target != None and self.args != None and self.is_playing != True:
+                                self.is_playing = True
                                 play_thread = threading.Thread(target=self.target, args=self.args)
                                 play_thread.start()
 
@@ -229,17 +234,22 @@ class GameEngine:
                     dest_x,dest_y = self.map.player_shooting_pos
                     self.enemy_is_dead = False
                     if self.player.move_to(dest_x,dest_y):
-                        number_of_enemies = randint(3,5)
-                        question, answer_index, self.target, self.args = generate_question(number_of_enemies,0)
-
+                        number_of_enemies = randint(2, 5)
                         self.entered_new_level = False
-                        self.enemies = [
-                            Enemy(self.parameters["entity_width"], self.parameters["entity_height"], self.enemies_start_pos[0] + self.enemies_gap * i, self.enemies_start_pos[1],
-                                  not (i == answer_index)) for i in range(number_of_enemies)]
+                        question, answer_index, self.target, self.args, reader = choose_question(number_of_enemies, 4)
+                        mode, root_note, duration, code, instrument = self.args  # musimy wypakować
+                        self.args = (mode, root_note, duration, code, instrument, self)  # bo dodajemy self
+                        self.enemies = [Enemy(self.parameters["entity_width"], self.parameters["entity_height"],
+                                              self.enemies_start_pos[0] + self.enemies_gap * i,
+                                              self.enemies_start_pos[1],
+                                              not (i == answer_index)) for i in range(number_of_enemies)]
+                        self.is_playing = True
+                        play_thread = threading.Thread(target=self.target, args=self.args)
+                        play_thread.start()
                         text = ""
                         for i in range(len(question)):
-                            text += f"{i+1}.{intervals.get_interval_name(question[i])} "
-                        # text += f"answer index - {answer_index}" # DEBUG ----------------
+                            text += f"{i+1}.{reader(question[i])} "
+                        text += f"dbgANS-{answer_index+1}" # DEBUG ----------------
                         self.question_text = text
                         self.enemies_are_dead = [False for _ in range(number_of_enemies)]
                         self.alive_ones = [i for i in range(number_of_enemies)]
