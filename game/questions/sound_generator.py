@@ -12,7 +12,8 @@ def play_interval_harmonic(root_note, duration, interval_semitones, instrument, 
     player.note_on(root_note + interval_semitones, 127)
     time.sleep(duration)
     player.note_off(root_note, 127)
-    player.note_on(root_note + interval_semitones, 127)
+    player.note_off(root_note + interval_semitones, 127)
+    time.sleep(0.5)
 
     player.close()
     pygame.midi.quit()
@@ -30,6 +31,7 @@ def play_interval_melodic_up(root_note, duration, interval_semitones, instrument
     player.note_on(root_note + interval_semitones, 127)
     time.sleep(duration / 2)
     player.note_off(root_note + interval_semitones, 127)
+    time.sleep(0.5)
 
     player.close()
     pygame.midi.quit()
@@ -47,6 +49,7 @@ def play_interval_melodic_down(root_note, duration, interval_semitones, instrume
     player.note_on(root_note, 127)
     time.sleep(duration / 2)
     player.note_off(root_note, 127)
+    time.sleep(0.5)
 
     player.close()
     pygame.midi.quit()
@@ -62,7 +65,8 @@ def play_compound_interval_harmonic(root_note, duration, interval_semitones, ins
     player.note_on(root_note + interval_semitones + 12, 127)
     time.sleep(duration)
     player.note_off(root_note, 127)
-    player.note_on(root_note + interval_semitones + 12, 127)
+    player.note_off(root_note + interval_semitones + 12, 127)
+    time.sleep(0.5)
 
     player.close()
     pygame.midi.quit()
@@ -80,6 +84,7 @@ def play_compound_interval_melodic_up(root_note, duration, interval_semitones, i
     player.note_on(root_note + interval_semitones + 12, 127)
     time.sleep(duration / 2)
     player.note_off(root_note + interval_semitones + 12, 127)
+    time.sleep(0.5)
 
     player.close()
     pygame.midi.quit()
@@ -97,6 +102,7 @@ def play_compound_interval_melodic_down(root_note, duration, interval_semitones,
     player.note_on(root_note, 127)
     time.sleep(duration / 2)
     player.note_off(root_note, 127)
+    time.sleep(0.5)
 
     player.close()
     pygame.midi.quit()
@@ -113,12 +119,16 @@ def play_harmonic(notes, player, duration):
     for note in notes:
         player.note_off(note, 127)
 
+    time.sleep(0.5)
+
 
 def play_melodic(notes, player, duration):
     for note in notes:
         player.note_on(note, 127)
         time.sleep(duration / len(notes))
         player.note_off(note, 127)
+
+    time.sleep(0.5)
 
 
 def play_chord(name, root_note, duration, instrument, engine):
@@ -245,3 +255,28 @@ def play_death():
 
     player.close()
     pygame.midi.quit()
+
+
+def play_test():
+    pygame.midi.init()
+    player = pygame.midi.Output(0)
+    instrument = 0
+
+    for i in range(110, 128):
+        instrument = i
+        print(instrument)
+        player.set_instrument(instrument)
+
+        player.note_on(60, 127)
+        player.note_on(61, 127)
+        player.note_on(62, 127)
+        time.sleep(1.0)
+        player.note_off(60, 127)
+        player.note_off(61, 127)
+        player.note_off(62, 127)
+
+
+    player.close()
+    pygame.midi.quit()
+
+
