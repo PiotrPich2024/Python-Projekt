@@ -277,7 +277,7 @@ class GameEngine:
                         text = ""
                         for i in range(len(question)):
                             text += f"{i+1}.{reader(question[i])} "
-                        text += f"dbgANS---{answer_index+1}---" # DEBUG ----------------
+                        text += f"DEBUG-ANSWER---{answer_index+1}---" # DEBUG ----------------
                         self.question_text = text
                         self.enemies_are_dead = [False for _ in range(number_of_enemies)]
                         self.alive_ones = [i for i in range(number_of_enemies)]

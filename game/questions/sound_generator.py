@@ -2,114 +2,6 @@ import pygame.midi
 import time
 
 
-# INTERVALS
-def play_interval_harmonic(root_note, duration, interval_semitones, instrument, engine):
-    pygame.midi.init()
-    player = pygame.midi.Output(0)
-    player.set_instrument(instrument)
-
-    player.note_on(root_note, 127)
-    player.note_on(root_note + interval_semitones, 127)
-    time.sleep(duration)
-    player.note_off(root_note, 127)
-    player.note_off(root_note + interval_semitones, 127)
-    time.sleep(0.5)
-
-    player.close()
-    pygame.midi.quit()
-    engine.set_is_playing(False)
-
-
-def play_interval_melodic_up(root_note, duration, interval_semitones, instrument, engine):
-    pygame.midi.init()
-    player = pygame.midi.Output(0)
-    player.set_instrument(instrument)
-
-    player.note_on(root_note, 127)
-    time.sleep(duration / 2)
-    player.note_off(root_note, 127)
-    player.note_on(root_note + interval_semitones, 127)
-    time.sleep(duration / 2)
-    player.note_off(root_note + interval_semitones, 127)
-    time.sleep(0.5)
-
-    player.close()
-    pygame.midi.quit()
-    engine.set_is_playing(False)
-
-
-def play_interval_melodic_down(root_note, duration, interval_semitones, instrument, engine):
-    pygame.midi.init()
-    player = pygame.midi.Output(0)
-    player.set_instrument(instrument)
-
-    player.note_on(root_note + interval_semitones, 127)
-    time.sleep(duration / 2)
-    player.note_off(root_note + interval_semitones, 127)
-    player.note_on(root_note, 127)
-    time.sleep(duration / 2)
-    player.note_off(root_note, 127)
-    time.sleep(0.5)
-
-    player.close()
-    pygame.midi.quit()
-    engine.set_is_playing(False)
-
-
-def play_compound_interval_harmonic(root_note, duration, interval_semitones, instrument, engine):
-    pygame.midi.init()
-    player = pygame.midi.Output(0)
-    player.set_instrument(instrument)
-
-    player.note_on(root_note, 127)
-    player.note_on(root_note + interval_semitones + 12, 127)
-    time.sleep(duration)
-    player.note_off(root_note, 127)
-    player.note_off(root_note + interval_semitones + 12, 127)
-    time.sleep(0.5)
-
-    player.close()
-    pygame.midi.quit()
-    engine.set_is_playing(False)
-
-
-def play_compound_interval_melodic_up(root_note, duration, interval_semitones, instrument, engine):
-    pygame.midi.init()
-    player = pygame.midi.Output(0)
-    player.set_instrument(instrument)
-
-    player.note_on(root_note, 127)
-    time.sleep(duration / 2)
-    player.note_off(root_note, 127)
-    player.note_on(root_note + interval_semitones + 12, 127)
-    time.sleep(duration / 2)
-    player.note_off(root_note + interval_semitones + 12, 127)
-    time.sleep(0.5)
-
-    player.close()
-    pygame.midi.quit()
-    engine.set_is_playing(False)
-
-
-def play_compound_interval_melodic_down(root_note, duration, interval_semitones, instrument, engine):
-    pygame.midi.init()
-    player = pygame.midi.Output(0)
-    player.set_instrument(instrument)
-
-    player.note_on(root_note + interval_semitones + 12, 127)
-    time.sleep(duration / 2)
-    player.note_off(root_note + interval_semitones + 12, 127)
-    player.note_on(root_note, 127)
-    time.sleep(duration / 2)
-    player.note_off(root_note, 127)
-    time.sleep(0.5)
-
-    player.close()
-    pygame.midi.quit()
-    engine.set_is_playing(False)
-
-
-# CHORDS
 def play_harmonic(notes, player, duration):
     for note in notes:
         player.note_on(note, 127)
@@ -131,6 +23,32 @@ def play_melodic(notes, player, duration):
     time.sleep(0.5)
 
 
+# INTERVALS
+def play_interval(name, root_note, duration, interval_code, instrument, engine):
+    pygame.midi.init()
+    player = pygame.midi.Output(0)
+    player.set_instrument(instrument)
+
+    match name:
+        case "interval_harmonic":
+            play_harmonic([root_note, root_note + interval_code], player, duration)
+        case "interval_melodic_up":
+            play_melodic([root_note, root_note + interval_code], player, duration)
+        case "interval_melodic_down":
+            play_melodic([root_note + interval_code, root_note], player, duration)
+        case "compound_interval_harmonic":
+            play_harmonic([root_note, root_note + interval_code + 12], player, duration)
+        case "compound_interval_melodic_up":
+            play_melodic([root_note, root_note + interval_code + 12], player, duration)
+        case "compound_interval_melodic_down":
+            play_melodic([root_note + interval_code + 12, root_note], player, duration)
+
+    player.close()
+    pygame.midi.quit()
+    engine.set_is_playing(False)
+
+
+# CHORDS
 def play_chord(name, root_note, duration, instrument, engine):
     pygame.midi.init()
     player = pygame.midi.Output(0)
@@ -257,26 +175,26 @@ def play_death():
     pygame.midi.quit()
 
 
-def play_test():
-    pygame.midi.init()
-    player = pygame.midi.Output(0)
-    instrument = 0
-
-    for i in range(110, 128):
-        instrument = i
-        print(instrument)
-        player.set_instrument(instrument)
-
-        player.note_on(60, 127)
-        player.note_on(61, 127)
-        player.note_on(62, 127)
-        time.sleep(1.0)
-        player.note_off(60, 127)
-        player.note_off(61, 127)
-        player.note_off(62, 127)
-
-
-    player.close()
-    pygame.midi.quit()
+# def play_test():
+#     pygame.midi.init()
+#     player = pygame.midi.Output(0)
+#     instrument = 0
+#
+#     for i in range(110, 128):
+#         instrument = i
+#         print(instrument)
+#         player.set_instrument(instrument)
+#
+#         player.note_on(60, 127)
+#         player.note_on(61, 127)
+#         player.note_on(62, 127)
+#         time.sleep(1.0)
+#         player.note_off(60, 127)
+#         player.note_off(61, 127)
+#         player.note_off(62, 127)
+#
+#
+#     player.close()
+#     pygame.midi.quit()
 
 

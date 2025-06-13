@@ -6,13 +6,24 @@ import Game.questions.names as names
 
 def play_interval_question(mode, root_note, duration, interval_semitones, instrument, engine):
 
-    interval_functions = {
-        0: sound_generator.play_interval_harmonic,      # interwał harmoniczny
-        1: sound_generator.play_interval_melodic_up,    # interwał melodyczny w górę
-        2: sound_generator.play_interval_melodic_down,  # interwał melodyczny w dół
+    interval_names = {
+        0: "interval_harmonic",  # interwał harmoniczny
+        1: "interval_melodic_up",  # interwał melodyczny w górę
+        2: "interval_melodic_down",  # interwał melodyczny w dół
     }
 
-    interval_functions[mode](root_note, duration, interval_semitones, instrument, engine)
+    sound_generator.play_interval(interval_names[mode], root_note, duration, interval_semitones, instrument, engine)
+
+
+def play_compound_interval_question(mode, root_note, duration, interval_code, instrument, engine):
+
+    compound_interval_names = {
+        0: "compound_interval_harmonic",  # interwał harmoniczny
+        1: "compound_interval_melodic_up",  # interwał melodyczny w górę
+        2: "compound_interval_melodic_down",  # interwał melodyczny w dół
+    }
+
+    sound_generator.play_interval(compound_interval_names[mode], root_note, duration, interval_code, instrument, engine)
 
 
 def play_triad_question(mode, root_note, duration, triad_code, instrument, engine):
@@ -53,17 +64,6 @@ def play_d9_question(mode, root_note, duration, d9_code, instrument, engine):
     }
 
     sound_generator.play_chord(d9_names[d9_code][mode], root_note, duration, instrument, engine)
-
-
-def play_compound_interval_question(mode, root_note, duration, interval_semitones, instrument, engine):
-
-    compound_interval_functions = {
-        0: sound_generator.play_compound_interval_harmonic,      # interwał harmoniczny
-        1: sound_generator.play_compound_interval_melodic_up,    # interwał melodyczny w górę
-        2: sound_generator.play_compound_interval_melodic_down,  # interwał melodyczny w dół
-    }
-
-    compound_interval_functions[mode](root_note, duration, interval_semitones, instrument, engine)
 
 
 def generate_question(answer_no, max_answer_no, instrument, duration, lowest_root_note, highest_root_note, question_type):
