@@ -1,3 +1,4 @@
+import random
 import threading
 
 import pygame
@@ -9,8 +10,8 @@ from Game.entity.player import Player
 from Game.entity.enemy import Enemy
 
 from Game.font.text_font import TextFont
-from Game.questions import intervals
-from Game.questions.question_generator import generate_question
+from Game.questions import names
+from Game.questions.question_generator import choose_question
 from Game.screens.map import Map
 from Game.screens.screen_elements.heart_points import HP
 from Game.screens.show_screen import ShowScreen
@@ -71,9 +72,18 @@ class GameEngine:
 
         self.scores = scores
 
-        # argumenty do ponownego zagrania pytania
+        # argumenty do grania (w tym do ponownego zagrania pytania)
+        self.is_playing = False
         self.target = None
         self.args = None
+
+        # poziom trudności
+        self.hidden_difficulty_level = -1
+        self.difficulty_level = 0
+        self.duration = 3
+        self.instrument = 0
+        self.lowest_root_note = 48
+        self.highest_root_note = 71
 
 
     def write_scores(self):
@@ -163,6 +173,26 @@ class GameEngine:
                 return False
         return True
 
+    def set_is_playing(self, state):
+        self.is_playing = state
+
+    def update_difficulty_level(self):
+        self.hidden_difficulty_level += 1
+
+        if self.hidden_difficulty_level % 5 and self.difficulty_level < 4:
+            self.difficulty_level += 1
+
+        if self.hidden_difficulty_level % 3 and self.duration > 0.6:
+            self.duration -= 0.05
+
+        self.instrument = random.randint(0, min(self.hidden_difficulty_level, 113))  # dalsze instrumenty midi to perkusyjne
+
+        if self.hidden_difficulty_level % 2 and self.lowest_root_note > 36:
+            self.lowest_root_note -= 1
+
+        if (self.hidden_difficulty_level + 1) % 2 and self.lowest_root_note < 83:
+            self.highest_root_note += 1
+
     def run(self, clock,surf,sc):
         running = True
         # dest = [self.player.img_pos[0] + self.player.width/2, self.player.img_pos[1] + self.player.height/2]
@@ -212,7 +242,8 @@ class GameEngine:
                                 self.method = Method.kill if self.method != Method.kill else Method.spare
                             elif event.key == pygame.K_DOWN:
                                 self.method = Method.spare if self.method == Method.kill else Method.kill
-                            elif event.key == pygame.K_r and self.target != None and self.args != None:
+                            elif event.key == pygame.K_r and self.target != None and self.args != None and self.is_playing != True:
+                                self.is_playing = True
                                 play_thread = threading.Thread(target=self.target, args=self.args)
                                 play_thread.start()
 
@@ -229,23 +260,30 @@ class GameEngine:
                     dest_x,dest_y = self.map.player_shooting_pos
                     self.enemy_is_dead = False
                     if self.player.move_to(dest_x,dest_y):
-                        number_of_enemies = randint(3,5)
-                        question, answer_index, self.target, self.args = generate_question(number_of_enemies,0)
-
+                        self.update_difficulty_level()
+                        number_of_enemies = randint(3, 5)
                         self.entered_new_level = False
-                        self.enemies = [
-                            Enemy(self.parameters["entity_width"], self.parameters["entity_height"], self.enemies_start_pos[0] + self.enemies_gap * i, self.enemies_start_pos[1],
-                                  not (i == answer_index)) for i in range(number_of_enemies)]
+                        question, answer_index, self.target, self.args, reader = choose_question(number_of_enemies, self.difficulty_level, self.instrument, self.duration, self.lowest_root_note, self.highest_root_note)
+                        number_of_enemies = len(question) # jeśli wylosuje się pytanie, na które są tylko 2 odpowiedzi to musimy zmniejszyć liczbę przeciwników
+                        mode, root_note, duration, code, instrument = self.args  # musimy wypakować
+                        self.args = (mode, root_note, duration, code, instrument, self)  # bo dodajemy self
+                        self.enemies = [Enemy(self.parameters["entity_width"], self.parameters["entity_height"],
+                                              self.enemies_start_pos[0] + self.enemies_gap * i,
+                                              self.enemies_start_pos[1],
+                                              not (i == answer_index)) for i in range(number_of_enemies)]
+                        self.is_playing = True
+                        play_thread = threading.Thread(target=self.target, args=self.args)
+                        play_thread.start()
                         text = ""
                         for i in range(len(question)):
-                            text += f"{i+1}.{intervals.get_interval_name(question[i])} "
-                        # text += f"answer index - {answer_index}" # DEBUG ----------------
+                            text += f"{i+1}.{reader(question[i])} "
+                        text += f"DEBUG-ANSWER---{answer_index+1}---" # DEBUG ----------------
                         self.question_text = text
                         self.enemies_are_dead = [False for _ in range(number_of_enemies)]
                         self.alive_ones = [i for i in range(number_of_enemies)]
 
                 if self.cleared_level:
-                    dest_x,dest_y = self.map.player_end_pos
+                    dest_x, dest_y = self.map.player_end_pos
                     if self.player.move_to(dest_x,dest_y):
                         self.chosen_enemy = 0
                         self.score += 50 * self.fail_mul
