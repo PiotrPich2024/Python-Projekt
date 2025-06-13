@@ -10,7 +10,7 @@ from Game.entity.player import Player
 from Game.entity.enemy import Enemy
 
 from Game.font.text_font import TextFont
-from Game.questions import names
+from Game.questions import names, sound_generator
 from Game.questions.question_generator import choose_question
 from Game.screens.map import Map
 from Game.screens.screen_elements.heart_points import HP
@@ -66,7 +66,7 @@ class GameEngine:
 
         self.thread_pool = []
 
-        self.question_text = ""
+        self.question_text = [""]
 
         self.fail_mul = 1
 
@@ -84,6 +84,11 @@ class GameEngine:
         self.instrument = 0
         self.lowest_root_note = 48
         self.highest_root_note = 71
+
+        # do wyświetlania odpowiedzi
+        self.questions = None
+        self.answer_index = None
+        self.reader = None
 
 
     def write_scores(self):
@@ -156,9 +161,11 @@ class GameEngine:
         surf.blit(temp_surf,(440,20))
         # testowanie polepszonej wersji textfont
         text_surf = pygame.Surface((200,300))
-        self.text_font.render_string(self.question_text,text_surf,pos=(0,50))
+        for i in range (len(self.question_text)):
+            self.text_font.render_string(self.question_text[i], text_surf, pos=(0, 50 + (i * 35)))
 
-        surf.blit(text_surf,(440,100))
+        surf.blit(text_surf, (440, 100))
+
         self.hp.render(surf)
 
     def check(self):
@@ -263,26 +270,28 @@ class GameEngine:
                         self.update_difficulty_level()
                         number_of_enemies = randint(3, 5)
                         self.entered_new_level = False
-                        question, answer_index, self.target, self.args, reader = choose_question(number_of_enemies, self.difficulty_level, self.instrument, self.duration, self.lowest_root_note, self.highest_root_note)
-                        number_of_enemies = len(question) # jeśli wylosuje się pytanie, na które są tylko 2 odpowiedzi to musimy zmniejszyć liczbę przeciwników
+                        self.question, self.answer_index, self.target, self.args, self.reader = choose_question(number_of_enemies, self.difficulty_level, self.instrument, self.duration, self.lowest_root_note, self.highest_root_note)
+                        number_of_enemies = len(self.question) # jeśli wylosuje się pytanie, na które są tylko 2 odpowiedzi to musimy zmniejszyć liczbę przeciwników
                         mode, root_note, duration, code, instrument = self.args  # musimy wypakować
                         self.args = (mode, root_note, duration, code, instrument, self)  # bo dodajemy self
                         self.enemies = [Enemy(self.parameters["entity_width"], self.parameters["entity_height"],
                                               self.enemies_start_pos[0] + self.enemies_gap * i,
                                               self.enemies_start_pos[1],
-                                              not (i == answer_index)) for i in range(number_of_enemies)]
+                                              not (i == self.answer_index)) for i in range(number_of_enemies)]
                         self.is_playing = True
                         play_thread = threading.Thread(target=self.target, args=self.args)
                         play_thread.start()
-                        text = ""
-                        for i in range(len(question)):
-                            text += f"{i+1}.{reader(question[i])} "
-                        text += f"DEBUG-ANSWER---{answer_index+1}---" # DEBUG ----------------
+                        text = []
+                        for i in range(len(self.question)):
+                            text.append(f"{i+1}.{self.reader(self.question[i])}")
+                        # text += f"DEBUG-ANSWER---{self.answer_index+1}---" # DEBUG
                         self.question_text = text
                         self.enemies_are_dead = [False for _ in range(number_of_enemies)]
                         self.alive_ones = [i for i in range(number_of_enemies)]
 
                 if self.cleared_level:
+                    self.question_text = []
+                    self.question_text.append(f"Correct answer was {self.answer_index + 1}. {self.reader(self.question[self.answer_index])}")
                     dest_x, dest_y = self.map.player_end_pos
                     if self.player.move_to(dest_x,dest_y):
                         self.chosen_enemy = 0
@@ -329,8 +338,8 @@ class GameEngine:
                                 self.game_state = GameStates.go_to_menu
                                 return ShowScreen.show_menu
 
-                mouse_pos,mouse_presed = pygame.mouse.get_pos(), pygame.mouse.get_pressed()
-                self.game_over_screen.play_again(mouse_pos,mouse_presed)
+                mouse_pos, mouse_pressed = pygame.mouse.get_pos(), pygame.mouse.get_pressed()
+                self.game_over_screen.play_again(mouse_pos,mouse_pressed)
 
                 self.game_over_screen.render(surf)
                 pygame.display.update()

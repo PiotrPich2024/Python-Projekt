@@ -67,13 +67,13 @@ def get_triad_name(value):
     match value:
         case 0:
             return "Major triad root position"
-        case 1:
-            return "Major triad first inversion"
         case 2:
-            return "Major triad second inversion"
-        case 3:
-            return "Minor triad root position"
+            return "Major triad first inversion"
         case 4:
+            return "Major triad second inversion"
+        case 1:
+            return "Minor triad root position"
+        case 3:
             return "Minor triad first inversion"
         case 5:
             return "Minor triad second inversion"
