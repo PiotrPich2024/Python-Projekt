@@ -97,7 +97,7 @@ class TextFont:
         surf_w, surf_h = surf.get_width(),surf.get_height()
         words_arr = self.big_brain_moment(surf_w,surf_h,s)
         string_height = len(words_arr) * (self.characters_height + self.gap_width)
-        temp_surf = pygame.Surface((surf_w, string_height))
+        temp_surf = pygame.Surface((surf_w, string_height), pygame.SRCALPHA)
         x_pos = 0
         y_pos = 0
         for words in words_arr:

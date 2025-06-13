@@ -185,6 +185,7 @@ class GameEngine:
                                     if i == self.chosen_enemy:
                                         continue
                                     self.enemies_are_dead[i] = True
+                                    if not self.enemies[i].is_impostor: self.hp.lose_hp()
                                 self.alive_ones = [self.chosen_enemy]
                             elif self.method == Method.kill:
                                 self.enemies_are_dead[self.chosen_enemy] = True
@@ -278,8 +279,8 @@ class GameEngine:
                         sc = None
 
                         return sc
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        match self.game_over_screen.play_again(pygame.mouse.get_pos()):
+                    if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP:
+                        match self.game_over_screen.play_again(pygame.mouse.get_pos(),pygame.mouse.get_pressed()):
                             case 0:
                                 self.reset()
                                 self.game_over_screen.reset()
@@ -289,6 +290,9 @@ class GameEngine:
                             case 3:
                                 self.game_state = GameStates.go_to_menu
                                 return ShowScreen.show_menu
+
+                mouse_pos,mouse_presed = pygame.mouse.get_pos(), pygame.mouse.get_pressed()
+                self.game_over_screen.play_again(mouse_pos,mouse_presed)
 
                 self.game_over_screen.render(surf)
                 pygame.display.update()

@@ -2,6 +2,7 @@ import pygame
 import json
 from Game.font.text_font import TextFont
 from Game.screens.screen_elements.button_class import Button
+from Game.screens.screen_elements.super_button import SuperButton
 from Game.screens.show_screen import ShowScreen
 
 class ImageInfo:
@@ -37,8 +38,22 @@ class ScoreScreen:
         self.small_gap = self.width / ImageInfo.width * ImageInfo.small_gap
 
         temp_surf = pygame.Surface((72,16))
+        self.button_width = 130
+        self.button_height = 50
 
-        self.go_back_button = Button(temp_surf,(self.font_start_pos[0] + 50, self.font_start_pos[1] + 300))
+        # return button surfaces
+        self.return_button_img = pygame.image.load('./pixel_art/buttons/score_menu/return/default.png').convert()
+        self.return_button_img = pygame.transform.scale(self.return_button_img,
+                                                      (self.button_width, self.button_height))
+        self.return_button_hover_img = pygame.image.load('./pixel_art/buttons/score_menu/return/hover.png')
+        self.return_button_hover_img = pygame.transform.scale(self.return_button_hover_img,
+                                                            (self.button_width, self.button_height))
+        self.return_button_clicked_img = pygame.image.load('./pixel_art/buttons/score_menu/return/clicked.png')
+        self.return_button_clicked_img = pygame.transform.scale(self.return_button_clicked_img,
+                                                              (self.button_width, self.button_height))
+
+        self.return_button = SuperButton(self.return_button_img,self.return_button_hover_img,
+                                          self.return_button_clicked_img,  (self.font_start_pos[0] + 50, self.font_start_pos[1] + 300))
 
         self.temp_surf_score = pygame.Surface((324, 48))
         self.temp_surf_1 = pygame.Surface((120, 16))
@@ -53,8 +68,7 @@ class ScoreScreen:
         self.middle_font.render_string(f"1st. {self.best_score}",surf, (self.font_start_pos[0], self.font_start_pos[1] + 100))
         self.middle_font.render_string(f"2nd. {self.second_score}",surf, (self.font_start_pos[0], self.font_start_pos[1] + 150))
         self.middle_font.render_string(f"3rd. {self.third_score}",surf, (self.font_start_pos[0], self.font_start_pos[1] + 200))
-        self.smaller_font.render_string("return",surf,(self.font_start_pos[0] + 50, self.font_start_pos[1] + 300))
-
+        self.return_button.render(surf)
 
     def show(self, clock,surf):
         running = True
@@ -63,9 +77,15 @@ class ScoreScreen:
                 if event.type == pygame.QUIT:
                     running = False
                     return None
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.go_back_button.is_clicked(pygame.mouse.get_pos()):
+                if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP:
+                    mouse_pos = pygame.mouse.get_pos()
+                    mouse_pressed = pygame.mouse.get_pressed()
+                    if self.return_button.update(mouse_pos, mouse_pressed):
                         return ShowScreen.show_menu
+
+            mouse_pos = pygame.mouse.get_pos()
+            mouse_pressed = pygame.mouse.get_pressed()
+            self.return_button.update(mouse_pos, mouse_pressed)
 
             self.render(surf)
             pygame.display.update()

@@ -2,6 +2,7 @@ import pygame
 
 from Game.particles.snow_generator import SnowGenerator
 from Game.screens.show_screen import ShowScreen
+from Game.screens.screen_elements.super_button import SuperButton
 
 
 class Menu:
@@ -22,10 +23,29 @@ class Menu:
         self.play_button_width = (132 * width)/640
         self.score_button_width = (138*width)/640
 
-        self.play_button_img = pygame.image.load('./pixel_art/play_button.png').convert()
+
+        # play button surfaces
+        self.play_button_img = pygame.image.load('./pixel_art/buttons/menu/play/default.png').convert()
         self.play_button_img = pygame.transform.scale(self.play_button_img,(self.play_button_width, self.button_height))
-        self.score_button_img = pygame.image.load('./pixel_art/score_button.png').convert()
+        self.play_button_hover_img = pygame.image.load('./pixel_art/buttons/menu/play/hover.png')
+        self.play_button_hover_img = pygame.transform.scale(self.play_button_hover_img,
+                                                             (self.play_button_width, self.button_height))
+        self.play_button_clicked_img = pygame.image.load('./pixel_art/buttons/menu/play/clicked.png')
+        self.play_button_clicked_img = pygame.transform.scale(self.play_button_clicked_img,
+                                                               (self.play_button_width, self.button_height))
+
+        # score button surfaces
+        self.score_button_img = pygame.image.load('./pixel_art/buttons/menu/score/default.png').convert()
         self.score_button_img = pygame.transform.scale(self.score_button_img,(self.score_button_width,self.button_height))
+        self.score_button_hover_img = pygame.image.load('./pixel_art/buttons/menu/score/hover.png')
+        self.score_button_hover_img = pygame.transform.scale(self.score_button_hover_img,(self.score_button_width, self.button_height))
+        self.score_button_clicked_img = pygame.image.load('./pixel_art/buttons/menu/score/clicked.png')
+        self.score_button_clicked_img = pygame.transform.scale(self.score_button_clicked_img,
+                                                             (self.score_button_width, self.button_height))
+
+        #super buttony
+        self.score_button = SuperButton(self.score_button_img,self.score_button_hover_img,self.score_button_clicked_img, self.score_button_pos)
+        self.play_button = SuperButton(self.play_button_img,self.play_button_hover_img,self.play_button_clicked_img, self.play_button_pos)
 
         self.snow_g = SnowGenerator(self.width,self.height)
 
@@ -33,19 +53,9 @@ class Menu:
         surf.blit(self.img,(0,0))
         self.snow_g.render(surf)
         surf.blit(self.depth_img,(0,0))
-        surf.blit(self.play_button_img,self.play_button_pos)
-        surf.blit(self.score_button_img,self.score_button_pos)
+        self.play_button.render(surf)
+        self.score_button.render(surf)
 
-    def clicked_on_play(self,x,y):
-        up_left = self.play_button_pos
-        down_right = list([self.play_button_pos[0] + self.play_button_width, self.play_button_pos[1] + self.button_height])
-        return up_left[0] < x < down_right[0] and up_left[1] < y < down_right[1]
-
-    def clicked_on_score(self,x,y):
-        up_left = self.score_button_pos
-        down_right = list([self.score_button_pos[0] + self.score_button_width,
-                          self.score_button_pos[1] + self.button_height])
-        return up_left[0] < x < down_right[0] and up_left[1] < y < down_right[1]
 
     def show(self,clock,surf,sc):
         running = True
@@ -56,17 +66,24 @@ class Menu:
 
                     sc = None
                     return sc
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP:
                     x,y = pygame.mouse.get_pos()
-                    if(self.clicked_on_play(x,y)):
+                    mouse_pressed = pygame.mouse.get_pressed()
+                    if(self.play_button.update((x,y),mouse_pressed)):
                         running = False
                         sc = ShowScreen.show_game
-
                         return sc
-                    elif(self.clicked_on_score(x,y)):
+                    elif(self.score_button.update((x,y),mouse_pressed)):
                         sc = ShowScreen.show_score
                         running = False
                         return sc
+
+            # jak tutaj nie bd sprawdzał dodatkowo to hover nie działa
+            mouse_pos = pygame.mouse.get_pos()
+            mouse_pressed = pygame.mouse.get_pressed()
+            self.score_button.update(mouse_pos, mouse_pressed)
+            self.play_button.update(mouse_pos, mouse_pressed)
+
             self.render(surf)
             pygame.display.update()
             clock.tick(60)

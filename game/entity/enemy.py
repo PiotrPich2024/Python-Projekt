@@ -1,24 +1,36 @@
 import pygame
+from random import randint
 
 class Enemy:
     def __init__(self,width,height,x,y,is_impostor):
-        self.img = pygame.image.load('./pixel_art/enemy/enemy.png').convert_alpha()
+        self.variant = randint(1,3)
+        path = f"./pixel_art/enemy/var{self.variant}"
+        self.img = pygame.image.load(path + '/enemy.png').convert_alpha()
         self.img = pygame.transform.scale(self.img, (width, height))
         self.width = width
         self.height = height
         self.img_pos = [x,y]
         self.is_impostor = is_impostor
-        self.spare_img = pygame.image.load('./pixel_art/enemy/enemy_spare.png').convert_alpha()
+        self.spare_img = pygame.image.load(path + '/choose/spare.png').convert_alpha()
         self.spare_img = pygame.transform.scale(self.spare_img, (width, height))
-        self.kill_img = pygame.image.load('./pixel_art/enemy/enemy_kill.png').convert_alpha()
+        self.kill_img = pygame.image.load(path + '/choose/kill.png').convert_alpha()
         self.kill_img = pygame.transform.scale(self.kill_img, (width, height))
 
-        self.dead_img = pygame.image.load('./pixel_art/enemy/enemy_crewmate.png').convert_alpha()
-        if is_impostor:
-            self.dead_img = pygame.image.load('./pixel_art/enemy/enemy_impostor.png').convert_alpha()
-        self.dead_img = pygame.transform.scale(self.dead_img, (width, height))
+        self.death_imgs = []
+        for i in range(1,5):
+            temp = pygame.image.load(path + f'/death/crewmate/death_{i}.png').convert_alpha()
+            if is_impostor:
+                temp = pygame.image.load(path + f'/death/impostor/death_{i}.png').convert_alpha()
+            temp = pygame.transform.scale(temp,(width,height))
+            self.death_imgs.append(temp)
 
         # animacje
+
+        # animacja śmierci
+        self.current_count = 0
+        self.animation_time = 2 * 60 # 2 * 60 fps
+
+        # animacje znikania i pojawiania się
         self.dead_transpercy = 255
         self.alive_transparency = 0
         self.fade_speed = 5
@@ -36,11 +48,19 @@ class Enemy:
 
 
     def render_dead(self,surf):
-        surf.blit(self.dead_img, self.img_pos)
-        self.fade_out()
+        if self.current_count <=  self.animation_time * 1/4:
+            surf.blit(self.death_imgs[0], self.img_pos)
+        elif self.current_count <= self.animation_time * 2 / 4:
+            surf.blit(self.death_imgs[1], self.img_pos)
+        elif self.current_count  <=  self.animation_time * 3/4:
+            surf.blit(self.death_imgs[2], self.img_pos)
+        else:
+            surf.blit(self.death_imgs[3], self.img_pos)
+            self.fade_out()
+        self.current_count += 1
 
     def fade_out(self):
-        self.dead_img.set_alpha(self.dead_transpercy)
+        self.death_imgs[3].set_alpha(self.dead_transpercy)
         if self.dead_transpercy > 0:
             self.dead_transpercy -= self.fade_speed
             self.dead_transpercy = max(self.dead_transpercy,0)
